@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="aaba23e3-16da-4c33-acb5-dc653076a86e" name="gendra" url="http://localhost">
+        <fileTransfer mountedRoot="$PROJECT_DIR$/../../../Git" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

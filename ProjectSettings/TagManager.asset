@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: GridBG
+    uniqueID: 4190911017
+    locked: 0
+  - name: Slots
+    uniqueID: 2837593163
+    locked: 0
+  - name: GridSpaces
+    uniqueID: 243751377
+    locked: 0
+  - name: ItemImages
+    uniqueID: 734592977
+    locked: 0
+  - name: ItemHovering
+    uniqueID: 1980449403
+    locked: 0
+  - name: ItemSpaces
+    uniqueID: 464035231
+    locked: 0

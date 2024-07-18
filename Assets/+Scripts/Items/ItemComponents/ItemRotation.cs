@@ -1,39 +1,32 @@
 using System;
 using UnityEngine;
 
-public class ItemRotation : MonoBehaviour,ItemComponent
+public class ItemRotation : MonoBehaviour
 {
-	public Direction GetDirection() => currentDirection;
 	private Item _item => GetComponent<Item>();
+	private ItemMovement _itemMovement => _item.GetComponent<ItemMovement>();
+	
 	private Direction currentDirection = Direction.Up;
 	private Direction _originalDirection;
 
-	public void Setup(ItemData data)
-	{
-		setRotation();
-	}
-
 	private void OnEnable()
 	{
-		_item.OnDragStart += StartDraggingItem;
-		_item.OnDragStop += DragItemStop;
-		_item.OnRotateCounterClockwise += RotateItemCounterClockwise;
+		_itemMovement.OnDragStart += StartDraggingItem;
+		_itemMovement.OnPutBack += RotateItemBack;
+		setRotation();
 	}
 
 	private void OnDisable()
 	{
-		_item.OnDragStart -= StartDraggingItem;
-		_item.OnDragStop -= DragItemStop;
-		_item.OnRotateCounterClockwise -= RotateItemCounterClockwise;
+		_itemMovement.OnDragStart -= StartDraggingItem;
+		_itemMovement.OnPutBack -= RotateItemBack;
 	}
 
-	public void RotateItemBack()
+	
+
+	private void RotateItemBack()
 	{
 		RotateToDirection(_originalDirection);
-	}
-
-	private void DragItemStop()
-	{
 	}
 
 	private void StartDraggingItem()
@@ -70,13 +63,14 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 	public Vector2 GetCenterRotationOffset()
 	{
 		var gridInfo = _item.Grid.GetGridInfo();
-		 if(gridInfo == null) return Vector2.zero;
+		if (gridInfo == null) return Vector2.zero;
+		Debug.Log("getting center for: " + currentDirection + " " + gridInfo.GetCenterOffset() + " " + GetRotationOffset());
 		if (currentDirection == Direction.Up || currentDirection == Direction.Down)
 			return gridInfo.GetCenterOffset() + GetRotationOffset();
 		return gridInfo.GetReverseCenterOffset() + GetRotationOffset();
 	}
 
-	private void RotateItemCounterClockwise()
+	public void RotateItemCounterClockwise()
 	{
 		_item.transform.rotation = Quaternion.Euler(0, 0, _item.transform.rotation.eulerAngles.z + 90);
 		switch (currentDirection)
@@ -98,24 +92,11 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 		}
 	}
 
-	private Vector2 GetMouseOffsetAfterRotation()
-	{
-		var currentGridInfo = _item.Grid.GetGridInfo();
-		if (currentDirection == Direction.Up || currentDirection == Direction.Down)
-		{
-			return new Vector2((float) -currentGridInfo.Width / 2 - 1 / 2,
-				(float) -currentGridInfo.Height / 2 + 1 / 2);
-		}
-
-		return new Vector2((float) -currentGridInfo.Height / 2 - 1 / 2,
-			(float) -currentGridInfo.Width / 2 - 1 / 2);
-	}
-
 	private void RotateToDirection(Direction dir)
 	{
 		currentDirection = dir;
 		setRotation();
-		_item.GetMovement().SetMouseOffset(GetCenterRotationOffset());
+		_itemMovement.SetMouseOffset(GetCenterRotationOffset());
 	}
 
 	private void setRotation()
@@ -137,5 +118,18 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 		}
 	}
 
-	
+
+	public Vector2 GetBottomLeftPosition()
+	{
+		var itemSpaceGrid = _item.Grid;
+		return currentDirection switch
+		       {
+			       Direction.Up => itemSpaceGrid.GetSpaceByGridPosition(0, 0).transform.position,
+			       Direction.Left => itemSpaceGrid.GetSpaceByGridPosition(0, itemSpaceGrid.GetGridInfo().Height - 1).transform.position,
+			       Direction.Down => itemSpaceGrid.GetSpaceByGridPosition(itemSpaceGrid.GetGridInfo().Width - 1,
+				       itemSpaceGrid.GetGridInfo().Height - 1).transform.position,
+			       Direction.Right => itemSpaceGrid.GetSpaceByGridPosition(itemSpaceGrid.GetGridInfo().Width - 1, 0).transform.position,
+			       _ => Vector2.zero
+		       };
+	}
 }

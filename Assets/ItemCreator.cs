@@ -25,7 +25,7 @@ public class ItemCreator : MonoBehaviour
    {
       var item = Instantiate(Prefabs.I.ItemPrefab, transform);
       var itemComponent = item.GetComponent<Item>();
-      itemComponent.SetIDAndSetupComponents(Random.Range(0, ItemData.Count));
+      itemComponent.Setup(Random.Range(0, ItemData.Count));
       return itemComponent;
    }
 }

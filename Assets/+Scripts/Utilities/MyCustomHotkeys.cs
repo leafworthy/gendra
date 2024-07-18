@@ -8,7 +8,7 @@ public static class EditorHotkeysTracker
 
 	static EditorHotkeysTracker()
 	{
-		SceneView.onSceneGUIDelegate += view =>
+		SceneView.duringSceneGui += view =>
 		{
 			var e = Event.current;
 			if (Event.current.command) return;

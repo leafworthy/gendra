@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using NaughtyAttributes;
+using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
+public class ItemSlotInventory : MonoBehaviour, IItemContainer
 {
 	[SerializeField] private GameObject _itemHolder;
 	private SlotGrid _slotGrid => GetComponentInChildren<SlotGrid>();
@@ -16,8 +17,8 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	private bool _init;
 
-	
-	public void Setup(ItemData data)
+
+	public void Start()
 	{
 		if (_slotGrid == null) return;
 		if (_init) return;
@@ -25,6 +26,8 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		if(_itemHolder == null)_itemHolder = new GameObject();
 		SetupGrid();
 	}
+
+
 
 	private void SetupGrid()
 	{
@@ -48,29 +51,36 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	public bool DragIn(Item item)
 	{
-		var slot = GetSlotAtWorldPosition(item.GetMovement().GetBottomLeftPosition());
+		var itemMovement = item.GetComponent<ItemMovement>();
+		var itemRotation = item.GetComponent<ItemRotation>();
+		var slot = GetSlotAtWorldPosition(itemRotation.GetBottomLeftPosition());
 		if (slot == null)
 		{
 			Debug.Log("slot null");
 			return false;
 		}
-
-		if (item.CanDrop())
+		
+		//item.transform.position = (Vector2) slot.transform.position - itemRotation.GetRotationOffset();
+		
+		if (itemMovement.CanDrop())
 		{
+			
 			AddItemToInventory(item, slot);
 			return true;
 		}
-
 		Debug.Log("can't drop");
 		return false;
 	}
 
+	
 	private void AddItemToInventory(Item item, Slot slot)
 	{
+		item.ItemContainer = this;
+		item.transform.position = (Vector2) slot.transform.position - item.GetComponent<ItemRotation>().GetRotationOffset();
+		Utils.DrawX(item.transform.position, 0.5f, Color.green);
+		Utils.DrawX(slot.transform.position, 0.5f, Color.yellow);
+		OccupyHoveredSlots(item, slot);
 		item.transform.SetParent(_itemHolder.transform);
-		item.SetPositionMinusRotationOffset(slot.transform.position);
-		item.SetInventory(this);
-		OccupyHoveredSlots(item);
 
 		_items.Add(item);
 	}
@@ -107,12 +117,29 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	{
 		foreach (var slot in _slotGrid.GetSlots())
 		{
-			if (MoveItemToSlotAndDragIn(item, slot)) return;
+			
+			if (DragIntoSlot(item, slot))
+			{
+				Utils.DrawX(slot.transform.position, 0.25f, Color.green);
+				return;
+			}
+			else
+			{
+				Utils.DrawX(slot.transform.position, 0.5f, Color.blue);
+			}
 		}
 
 		item.DestroyItem();
 	}
 
+	private bool DragIntoSlot(Item item, Slot slot)
+	{
+		if (!item.GetComponent<ItemMovement>().CanDrop()) return false;
+		AddItemToInventory(item, slot);
+		return true;
+	}
+
+	public GameObject CirclePosition;
 
 
 	private void SetAllSlotsUnoccupied()
@@ -123,13 +150,9 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		}
 	}
 
-	private bool MoveItemToSlotAndDragIn(Item item, Slot slot)
-	{
-		item.GetMovement().SetPositionMinusRotationOffset(slot.transform.position);
-		return DragIn(item);
-	}
 
-	private void OccupyHoveredSlots(Item item)
+
+	private void OccupyHoveredSlots(Item item, IItemContainer inventory)
 	{
 		foreach (var slot in GetHoveredSlots(item))
 		{
@@ -158,7 +181,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	{
 		foreach (var slot in GetHoveredSlots(item))
 		{
-			if (slot.GetInventory() != item.GetInventory()) continue;
+			if (slot.GetInventory() != item.ItemContainer) continue;
 			slot.SetUnoccupied();
 		}
 	}

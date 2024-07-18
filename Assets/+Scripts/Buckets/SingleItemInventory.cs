@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class SingleItemInventory : MonoBehaviour, IItemContainer
 {
-	private Item _item;
-	private int multiplier = 2;
+	private Item _currentItem;
+	private Vector2 _originalItemScale;
 	private BoxCollider2D _collider => GetComponent<BoxCollider2D>();
-	public Vector2Int size;
-	public Vector2Int margin => new(2, 2);
+	[SerializeField]private int scaleMultiplier = 2;
+	[SerializeField] private Vector2Int size;
+	private Vector2Int margin => new(2, 2);
 	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
 
 	[Button]
@@ -17,28 +18,29 @@ public class SingleItemInventory : MonoBehaviour, IItemContainer
 		_collider.size = size+margin;
 	}
 
-
-
 	public bool DragIn(Item draggingItem)
 	{
-		if (_item != null) return false;
-		_item = draggingItem;
-		_item.transform.SetParent(transform);
-		_item.transform.localScale = Vector3.one * multiplier;
-		_item.transform.position =( (Vector2)transform.position -_item.GetRotation().GetCenterRotationOffset() *multiplier);
+		if (_currentItem != null) return false;
+		_currentItem = draggingItem;
+		_currentItem.transform.SetParent(transform);
+		_originalItemScale = _currentItem.transform.localScale;
+		_currentItem.transform.localScale = Vector3.one * scaleMultiplier;
+		var _itemMovement = _currentItem.GetComponent<ItemMovement>();
+		_itemMovement.SetPosition(transform.position);
 		_spriteRenderer.color = Color.white;
-		_item.SetInventory(this);
+		_currentItem.ItemContainer = this;
 		return true;
 	}
 
 	public bool DragOut(Item item)
 	{
-		_item.transform.SetParent(null);
-		_item.transform.localScale = Vector3.one;
-		_item.transform.position = ( (Vector2)transform.position -_item.GetRotation().GetCenterRotationOffset());
-		_item.SetInventory(null);
+		_currentItem.transform.SetParent(null);
+		_currentItem.transform.localScale = _originalItemScale;
+		var _itemMovement = _currentItem.GetComponent<ItemMovement>();
+		_itemMovement.SetPosition(transform.position);
+		_currentItem.ItemContainer = null;
 		_spriteRenderer.color = Color.grey;
-		_item = null;
+		_currentItem = null;
 		return true;
 	}
 }

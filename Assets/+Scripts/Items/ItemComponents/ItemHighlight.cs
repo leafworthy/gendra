@@ -1,30 +1,27 @@
 using UnityEngine;
 
-public class ItemHighlight:MonoBehaviour, ItemComponent
+public class ItemHighlight:MonoBehaviour
 {
-	private Item _item => GetComponent<Item>();
+	private ItemMovement _itemMovement => GetComponent<ItemMovement>();
 	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
+	private Animator _animator => GetComponentInChildren<Animator>();
 	
 	private bool isHighlighted;
 	private bool isHoveringHighlighted;
-	private Animator _animator => GetComponentInChildren<Animator>();
-	private static readonly int BirthTrigger = Animator.StringToHash("BirthTrigger");
 	private static readonly int IsHighlighted_AnimatorHash = Animator.StringToHash("IsHighlighted");
-	private static readonly int IsHovering = Animator.StringToHash("IsHovering");
+	private static readonly int IsDragging_AnimatorHash = Animator.StringToHash("IsHovering");
 
-	public void Setup(ItemData data)
-	{
-	}
+
 
 	private void Update()
 	{
-		if (_item.IsHovering())
+		if (_itemMovement.IsDragging())
 		{
-			HighlightHovering();
+			HighlightDragging();
 		}
 		else
 		{
-			UnHighlightHovering();
+			UnHighlightDragging();
 		}
 	}
 
@@ -49,23 +46,22 @@ public class ItemHighlight:MonoBehaviour, ItemComponent
 		_spriteRenderer.color = ColorManager.GetColorFromCategoryDark(ColorManager.ItemColor.white);
 	}
 
-	private void HighlightHovering()
+	private void HighlightDragging()
 	{
 		if (isHoveringHighlighted) return;
 		isHoveringHighlighted = true;
-		_animator.SetBool(IsHovering, true);
+		_animator.SetBool(IsDragging_AnimatorHash, true);
 		_spriteRenderer.color = Color.white;
 		SortingManager.ChangeLayer(_spriteRenderer, SortingManager.ItemHoverLayer);
 		SortingManager.SetToFront(_spriteRenderer);
 	}
 
-	private void UnHighlightHovering()
+	private void UnHighlightDragging()
 	{
 		if (!isHoveringHighlighted) return;
 		isHoveringHighlighted = false;
-		_animator.SetBool(IsHovering, false);
+		_animator.SetBool(IsDragging_AnimatorHash, false);
 		_spriteRenderer.color = ColorManager.GetColorFromCategoryDark(ColorManager.ItemColor.white);
 	}
 
-	
 }

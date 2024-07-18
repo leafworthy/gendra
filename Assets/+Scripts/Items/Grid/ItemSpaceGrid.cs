@@ -3,43 +3,19 @@ using System.Linq;
 using NaughtyAttributes;
 using UnityEngine;
 
-public class ItemSpaceGrid : Grid
+public class ItemSpaceGrid : Grid, ItemComponent
 {
-	private void OnEnable()
-	{
-		var item = GetComponentInParent<Item>();
-		item.OnSetup += Setup;
-
-	}
-
-	public static int howMany;
-	private void OnDisable()
-	{
-		var item = GetComponentInParent<Item>();
-		if(item == null) return;
-		item.OnSetup -= Setup;
-	
-	}
 
 	public List<ItemGridSpace> GetItemGridSpaces()
 	{
-		
 		var spaces = new List<ItemGridSpace>();
-		var randomColor = Random.ColorHSV();
-		
-		howMany++;
-		Debug.Log(howMany);
 		foreach (var space in GetGridObjects())
 		{
-			
 			if (space is ItemGridSpace gridSpace)
 			{
-				
-				Utils.DrawX( gridSpace.transform.position,  0.5f, randomColor);
 				spaces.Add(gridSpace);
 			}
 		}
-		Debug.Break();
 
 		return spaces;
 	}

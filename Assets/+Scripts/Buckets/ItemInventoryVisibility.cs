@@ -12,9 +12,9 @@ public class ItemInventoryVisibility : MonoBehaviour
 	[SerializeField] private SpriteRenderer _inventoryBG;
 	[SerializeField] private ItemSlotInventory _inventory;
 	private BoxCollider2D _inventoryCollider => _inventoryBG.GetComponent<BoxCollider2D>();
-
+	private Item _item => GetComponent<Item>();
 	private GridInfo _gridInfo => _inventory.GetGridInfo();
-	private void Awake() => Init();
+	private void Start() => Init();
 
 	[Button]
 	public void ShowInventory() => SetInventoryVisible(true);
@@ -33,6 +33,7 @@ public class ItemInventoryVisibility : MonoBehaviour
 	private void Init()
 	{
 		SetEverythingVisible(true);
+		_item.Setup();
 		UpdateInventoryGraphics();
 		SetEverythingVisible(false);
 		SetInventoryVisible(true);

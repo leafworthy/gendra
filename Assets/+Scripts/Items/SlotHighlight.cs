@@ -69,8 +69,7 @@ public class SlotHighlight : MonoBehaviour
 		foreach (var space in itemSpaces)
 		{
 			if (space.IsEmptySpace) continue;
-			var itemMovement = space.GetItem().GetComponent<ItemMovement>();
-			if (itemMovement.IsDragging()) SetSlotHoveredBy(space.GetItem());
+			if (space.GetItem().GetMovement().IsDragging()) SetSlotHoveredBy(space.GetItem());
 			return;
 		}
 
@@ -79,7 +78,7 @@ public class SlotHighlight : MonoBehaviour
 
 	private void SetHovered(Item item)
 	{
-		SetFillColor(ColorManager.GetColor(item.GetData().itemColor));
+		SetFillColor(ColorManager.GetColor(item.GetColor()));
 	}
 
 	private void SetUnHovered()
@@ -109,7 +108,7 @@ public class SlotHighlight : MonoBehaviour
 	{
 		if (isOccupied) return;
 		isOccupied = true;
-		SetFillColor(ColorManager.GetColorFromCategoryDark(item.GetData().itemColor));
+		SetFillColor(ColorManager.GetColorFromCategoryDark(item.GetColor()));
 		SetOutlineColor(Color.black);
 	}
 }

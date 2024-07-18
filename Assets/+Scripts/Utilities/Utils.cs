@@ -2,13 +2,10 @@ using UnityEngine;
 
 public class Utils
 {
-	public static void DrawX(Vector2 pos, float size, Color color)
+	public static void DrawX(Vector2 pos, float size = .5f)
 	{
-		var topLeft = new Vector2(pos.x - size, pos.y - size);
-		var topRight = new Vector2(pos.x + size, pos.y - size);
-		var bottomLeft = new Vector2(pos.x - size, pos.y + size);
-		var bottomRight = new Vector2(pos.x + size, pos.y + size);
-		Debug.DrawLine(topLeft, bottomRight, color, .5f);
-		Debug.DrawLine(topRight, bottomLeft, color, .5f);
+		Debug.DrawLine(new Vector2(-size, -size) + pos, pos + new Vector2(size, size), Color.red, 1f);
+		Debug.DrawLine(new Vector2(-size, size) + pos, pos + new Vector2(size, -size), Color.red, 1f);
+
 	}
 }

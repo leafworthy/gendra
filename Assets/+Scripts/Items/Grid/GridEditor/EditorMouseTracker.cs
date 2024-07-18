@@ -1,24 +1,14 @@
 using UnityEditor;
 using UnityEngine;
 
-//[ExecuteAlways]
+[ExecuteAlways]
 public class EditorMouseTracker:EditorWindow
 {
 	[MenuItem("Tools/Get Mouse Position #t")]
 	public static void GetMousePosition()
 	{
-		SceneView.duringSceneGui += OnSceneGUI;
+		SceneView.onSceneGUIDelegate += OnSceneGUI;
 	}
-
-	private void OnDisable()
-	{
-		//dispose window
-		 //hello
-		 //hello more
-		 
-		SceneView.duringSceneGui -= OnSceneGUI;
-	}
-
 	private static Vector3 currentMousePosition;
 
 	private static bool brushing;

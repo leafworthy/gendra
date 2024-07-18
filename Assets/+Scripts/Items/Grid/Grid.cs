@@ -10,15 +10,8 @@ public class Grid : MonoBehaviour
 	private GameObject gridPrefab;
 	public GridInfo gridInfo;
 	public GridInfo GetGridInfo() => gridInfo;
-
-	public List<IGriddable> GetGridObjects()
-	{
-		if (gridObjects.Count <= 0) MakeGrid();
-		return gridObjects;
-	}
-	private List<IGriddable> gridObjects = new List<IGriddable>();
-
-
+	public List<IGriddable> GetGridObjects() => gridObjects;
+	private List<IGriddable> gridObjects = new();
 
 	[Button]
 	private void DestroyGrid()
@@ -31,11 +24,6 @@ public class Grid : MonoBehaviour
 		}
 	}
 
-
-	public void MakeGrid()
-	{
-		MakeGrid(gridInfo, gridPrefab);
-	}
 	
 
 	public virtual void MakeGrid(GridInfo info, GameObject prefab)
@@ -53,7 +41,6 @@ public class Grid : MonoBehaviour
 				if(newSpace == null) continue;
 				newSpace.SetGridPosition(x, y);
 				gridObjects.Add(newSpace);
-				Debug.Log("grid objet added");
 			}
 		}
 	}

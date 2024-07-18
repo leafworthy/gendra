@@ -1,28 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
-using NaughtyAttributes;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class SlotGrid : Grid
 {
 	private List<Slot> slots => GetComponentsInChildren<Slot>().ToList();
-	private bool made;
-	public List<Slot> GetSlots()
-	{
-		if(!made) MakeGrid();
-		return slots;
-	}
 
-	[Button]
-	public void ButtonMakeGrid()
-	{
-		MakeGrid();
-	}
+	public List<Slot> GetSlots() => slots;
+
 	public override void MakeGrid(GridInfo info, GameObject prefab)
 	{
 		base.MakeGrid(info, prefab);
 		SetEmptySpaces();
+		Debug.Log("made slot grid" + info.Height + " " + info.Width );
 	}
 
 	private void SetEmptySpaces()

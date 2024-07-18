@@ -1,29 +1,21 @@
 using UnityEngine;
 
-public class ItemGraphic : MonoBehaviour
+public class ItemGraphic : MonoBehaviour, ItemComponent
 {
 	private bool _isDragging;
 	private Item _item => GetComponent<Item>();
-	private ItemMovement _itemMovement => GetComponent<ItemMovement>();
+	public ColorManager.ItemColor GetColor() => _item.GetData().itemColor;
 
 	private void OnEnable()
 	{
-		_itemMovement.OnDragStart += StartDragging;
-		_itemMovement.OnDragStop += StopDragging;
-		 _itemMovement.OnPutBack += DragItemBack;
-		_item.OnSetup += Setup;
+		_item.OnDragStart += StartDragging;
+		_item.OnDragStop += StopDragging;
 	}
 
 	private void OnDisable()
 	{
-		_itemMovement.OnDragStart -= StartDragging;
-		_itemMovement.OnDragStop -= StopDragging;
-		_item.OnSetup -= Setup;
-	}
-
-	private void Setup(ItemData itemData)
-	{
-		SetSpriteByID(itemData.itemID);
+		_item.OnDragStart -= StartDragging;
+		_item.OnDragStop -= StopDragging;
 	}
 
 	private void StartDragging()
@@ -94,10 +86,8 @@ public class ItemGraphic : MonoBehaviour
 	{
 		foreach (var space in _item.Grid.GetItemGridSpaces())
 		{
-		
 			space.UnHighlightActualSpace();
 		}
-
 	}
 
 	private void DragItemBack()
@@ -109,5 +99,5 @@ public class ItemGraphic : MonoBehaviour
 	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
 	private void SetSpriteByID(int itemID) => _spriteRenderer.sprite = ItemData.GetSpriteByID(itemID);
 
-	
+	public void Setup(ItemData data) => SetSpriteByID(data.itemID);
 }

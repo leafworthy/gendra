@@ -20,8 +20,8 @@ public class ItemGridDesigner : MonoBehaviour
 	{
 		dataIndex = itemDataID;
 
-		item.Setup(itemDataID);
-		item.ItemContainer = null;
+		item.SetIDAndSetupComponents(itemDataID);
+		item.SetInventory(null);
 		MakeNewUnsavedDataAndCopyCurrentItem();
 	}
 
@@ -45,7 +45,7 @@ public class ItemGridDesigner : MonoBehaviour
 				AssetsDataResourcesItemdataItemID + ItemData.Count.ToString("000") + ".asset");
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
-			item.Setup(newItemData.itemID);
+			item.SetIDAndSetupComponents(newItemData.itemID);
 			SetCurrentItemData(newItemData.itemID);
 		}
 	}
@@ -72,28 +72,28 @@ public class ItemGridDesigner : MonoBehaviour
 	public void AddRow()
 	{
 	//unsavedItemData.spaceGridInfo.Height++;
-		item.Setup(unsavedItemData.itemID);
+		item.SetIDAndSetupComponents(unsavedItemData.itemID);
 	}
 
 	[Button(">>>>>>>")]
 	public void AddColumn()
 	{
 		//unsavedItemData.spaceGridInfo.Width++;
-		item.Setup(unsavedItemData.itemID);
+		item.SetIDAndSetupComponents(unsavedItemData.itemID);
 	}
 
 	[Button("VVVVVVV")]
 	public void RemoveRow()
 	{
 		//unsavedItemData.spaceGridInfo.Height--;
-		item.Setup(unsavedItemData.itemID);
+		item.SetIDAndSetupComponents(unsavedItemData.itemID);
 	}
 
 	[Button("<<<<<<<")]
 	public void RemoveColumn()
 	{
 		//unsavedItemData.spaceGridInfo.Width--;
-		item.Setup(unsavedItemData.itemID);
+		item.SetIDAndSetupComponents(unsavedItemData.itemID);
 	}
 
 	[Button("###SAVE###")]

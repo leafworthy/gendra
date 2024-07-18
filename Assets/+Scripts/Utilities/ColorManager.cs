@@ -35,16 +35,22 @@ using UnityEngine;
 			{
 				case ItemColor.white:
 					return White;
+					break;
 				case ItemColor.yellow:
 					return Yellow;
+					break;
 				case ItemColor.pink:
 					return Pink;
+					break;
 				case ItemColor.blue:
 					return Blurple;
+					break;
 				case ItemColor.red:
 					return Red;
+					break;
 				default:
 					return Red;
+					break;
 			}
 		}
 
@@ -54,16 +60,22 @@ using UnityEngine;
 			{
 				case ItemColor.white:
 					return DarkWhite;
+					break;
 				case ItemColor.yellow:
 					return DarkYellow;
+					break;
 				case ItemColor.pink:
 					return DarkPink;
+					break;
 				case ItemColor.blue:
 					return DarkBlurple;
+					break;
 				case ItemColor.red:
 					return DarkRed;
+					break;
 				default:
 					return Red;
+					break;
 			}
 		}
 	}

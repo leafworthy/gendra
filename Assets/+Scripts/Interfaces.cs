@@ -1,10 +1,12 @@
-	using System.Collections.Generic;
 	using UnityEngine;
 
 	
 
 
-
+	public interface ItemComponent
+	{
+		void Setup(ItemData data);
+	}
 
 	public interface IGriddable
 	{
@@ -18,3 +20,10 @@
 		
 	}
 
+	public interface IDraggable
+	{
+		void DragTo(Vector2 pos);
+		void StartDragging();
+		void StopDragging();
+		Vector2 GetPosition();
+	}

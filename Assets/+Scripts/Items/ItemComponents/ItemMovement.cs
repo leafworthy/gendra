@@ -25,17 +25,18 @@ public class ItemMovement : MonoBehaviour
 		_item.OnDragStart += StartDraggingItem;
 		_item.OnDragStop += DragItemStop;
 	}
-	 
- 	private void OnDisable()
+
+	private void OnDisable()
 	{
 		_item.OnDragStart -= StartDraggingItem;
 		_item.OnDragStop -= DragItemStop;
 	}
+
 	public void SetMouseOffset(Vector2 offset) => mouseOffset = offset;
 
 	private void Update()
 	{
-		if (_isDragging) _item.transform.position = ( MouseManager.GetMouseWorldPosition() - mouseOffset);
+		if (_isDragging) _item.transform.position = MouseManager.GetMouseWorldPosition() - mouseOffset;
 	}
 
 	private void StartDraggingItem()
@@ -53,7 +54,6 @@ public class ItemMovement : MonoBehaviour
 		var inventoriesAtMousePosition = MouseManager.GetObjectsAtMousePosition<IItemContainer>();
 		if (inventoriesAtMousePosition.Count <= 0)
 		{
-			Debug.Log("drag back here");
 			var TableSpaceAtMousePosition = MouseManager.GetObjectsAtMousePosition<TableSpace>();
 			if (TableSpaceAtMousePosition.Count > 0)
 			{
@@ -61,13 +61,10 @@ public class ItemMovement : MonoBehaviour
 				Debug.Log("dropped on tablespace");
 				return;
 			}
+
 			DragItemBack();
 		}
-		else if (!inventoriesAtMousePosition[0].DragIn(_item))
-		{
-			Debug.Log("drag back hererhrhr");
-			DragItemBack();
-		}
+		else if (!inventoriesAtMousePosition[0].DragIn(_item)) DragItemBack();
 	}
 
 	private void DragItemBack()
@@ -97,24 +94,37 @@ public class ItemMovement : MonoBehaviour
 		       };
 	}
 
-	public bool CanDrop()
+	public bool CanDrop(IItemContainer destinationInventory)
 	{
+		if (destinationInventory == null)
+		{
+			Debug.Log("destination inventory null");
+			return false;
+		}
 		var pointsToTest = _item.Grid.GetWorldPositionsOfFullSpaces();
 		foreach (var point in pointsToTest)
 		{
 			var slots = MouseManager.GetObjectsAtPosition<Slot>(point);
 
-			Debug.DrawLine(point, point + Vector2.one, Color.red, 1f);
 			if (slots.Count <= 0)
 			{
-				Debug.Log("no slots");
+				Debug.Log("no slots at drop point");
 				return false;
 			}
 
-			if (!slots[0].IsUnoccupied || slots[0].IsDisabled)
+			foreach (var slot in slots)
 			{
-				Debug.Log("slot unoccupied" + slots[0].IsUnoccupied + " disabled" + slots[0].IsDisabled);
-				return false;
+				if (slot.GetInventory() != destinationInventory)
+				{
+					Debug.Log("inventory different: slot inventory: " + slot.GetInventory() + " destination inventory: " + destinationInventory);
+					continue;
+				}
+
+				if (!slots[0].IsUnoccupied || slots[0].IsDisabled)
+				{
+					Debug.Log("slot unoccupied" + slots[0].IsUnoccupied + " disabled" + slots[0].IsDisabled);
+					return false;
+				}
 			}
 		}
 

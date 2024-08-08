@@ -59,5 +59,5 @@ public class Item : MonoBehaviour
 
 	public bool IsHovering() => GetMovement().IsDragging();
 
-	public bool CanDrop() => GetMovement().CanDrop();
+	public bool CanDrop(IItemContainer inventory) => GetMovement().CanDrop(inventory);
 }

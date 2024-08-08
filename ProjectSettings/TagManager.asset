@@ -41,6 +41,24 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: 2_BGInventory
+    uniqueID: 2634648997
+    locked: 0
+  - name: 2_GridBG
+    uniqueID: 870891835
+    locked: 0
+  - name: 2_Slots
+    uniqueID: 2854763445
+    locked: 0
+  - name: 2_GridSpaces
+    uniqueID: 1533736151
+    locked: 0
+  - name: 2_ItemImages
+    uniqueID: 1174951537
+    locked: 0
+  - name: BGInventory
+    uniqueID: 4144687201
+    locked: 0
   - name: GridBG
     uniqueID: 4190911017
     locked: 0
@@ -58,4 +76,7 @@ TagManager:
     locked: 0
   - name: ItemSpaces
     uniqueID: 464035231
+    locked: 0
+  - name: TopButtons
+    uniqueID: 3619302241
     locked: 0

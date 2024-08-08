@@ -9,7 +9,7 @@ public class InventoryMovement : MonoBehaviour
 	public void SetDragging(bool isDragging)
 	{
 		_isDragging = isDragging;
-		_rb.isKinematic = !isDragging;
+		//_rb.isKinematic = !isDragging;
 		if (!isDragging) return;
 		_mouseOffset = (Vector2) transform.position - MouseManager.GetMouseWorldPosition();
 	}

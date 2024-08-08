@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NaughtyAttributes;
@@ -15,6 +16,8 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	public Grid GetGrid() => _slotGrid;
 
 	private bool _init;
+	public event Action OnSetupComplete;
+	public event Action OnInventoryChanged;
 
 	
 	public void Setup(ItemData data)
@@ -24,6 +27,8 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		_init = true;
 		if(_itemHolder == null)_itemHolder = new GameObject();
 		SetupGrid();
+		OnSetupComplete?.Invoke();
+		
 	}
 
 	private void SetupGrid()
@@ -55,7 +60,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 			return false;
 		}
 
-		if (item.CanDrop())
+		if (item.CanDrop(this))
 		{
 			AddItemToInventory(item, slot);
 			return true;
@@ -73,6 +78,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		OccupyHoveredSlots(item);
 
 		_items.Add(item);
+		OnInventoryChanged?.Invoke();
 	}
 
 	public bool DragOut(Item item)
@@ -80,6 +86,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		UnoccupyHoveredSlots(item);
 		item.transform.SetParent(null);
 		_items.Remove(item);
+		OnInventoryChanged?.Invoke();
 		return true;
 	}
 
@@ -94,6 +101,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		var toDestroy = new List<Item>();
 		foreach (var item in _items)
 		{
+			if(item.gameObject == this.gameObject) continue;
 			toDestroy.Add(item);
 		}
 
@@ -145,10 +153,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		{
 			var slots = MouseManager.GetObjectsAtPosition<Slot>(point);
 			if (slots.Count <= 0) continue;
-			foreach (var slot in slots)
-			{
-				hoveredSlots.Add(slot);
-			}
+			hoveredSlots.Add(slots[0]);
 		}
 
 		return hoveredSlots;

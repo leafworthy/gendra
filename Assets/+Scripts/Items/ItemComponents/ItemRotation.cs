@@ -16,14 +16,12 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 	private void OnEnable()
 	{
 		_item.OnDragStart += StartDraggingItem;
-		_item.OnDragStop += DragItemStop;
 		_item.OnRotateCounterClockwise += RotateItemCounterClockwise;
 	}
 
 	private void OnDisable()
 	{
 		_item.OnDragStart -= StartDraggingItem;
-		_item.OnDragStop -= DragItemStop;
 		_item.OnRotateCounterClockwise -= RotateItemCounterClockwise;
 	}
 
@@ -32,9 +30,7 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 		RotateToDirection(_originalDirection);
 	}
 
-	private void DragItemStop()
-	{
-	}
+	
 
 	private void StartDraggingItem()
 	{
@@ -96,19 +92,6 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 			default:
 				throw new ArgumentOutOfRangeException();
 		}
-	}
-
-	private Vector2 GetMouseOffsetAfterRotation()
-	{
-		var currentGridInfo = _item.Grid.GetGridInfo();
-		if (currentDirection == Direction.Up || currentDirection == Direction.Down)
-		{
-			return new Vector2((float) -currentGridInfo.Width / 2 - 1 / 2,
-				(float) -currentGridInfo.Height / 2 + 1 / 2);
-		}
-
-		return new Vector2((float) -currentGridInfo.Height / 2 - 1 / 2,
-			(float) -currentGridInfo.Width / 2 - 1 / 2);
 	}
 
 	private void RotateToDirection(Direction dir)

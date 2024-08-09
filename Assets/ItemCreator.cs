@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ItemCreator : MonoBehaviour
 {
-   private ItemSlotInventory Inventory => GetComponentInChildren<ItemSlotInventory>();
+   [SerializeField]private ItemSlotInventory Inventory;
 
    [Button]
    public void AddRandomItem()

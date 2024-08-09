@@ -26,6 +26,8 @@ public class ItemSpaceGrid : Grid, ItemComponent
 		{
 			GetItemGridSpaces().Add(griddable);
 		}
+
+		Debug.Log("grid setup", this);
 	}
 
 	public List<Vector2> GetWorldPositionsOfFullSpaces()

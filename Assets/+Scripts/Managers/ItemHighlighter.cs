@@ -16,7 +16,11 @@ public class ItemHighlighter : MonoBehaviour
 
 	private void HighlightDraggedItems()
 	{
-		if (currentlyHighlightedItem == null) return;
+		if (currentlyHighlightedItem == null)
+		{
+			if(currentlyDraggingItem != null) UnHighlightDragging(currentlyDraggingItem);
+			return;
+		}
 		if (currentlyHighlightedItem.GetMovement().IsDragging())
 		{
 			if (currentlyDraggingItem == currentlyHighlightedItem) return;
@@ -70,7 +74,6 @@ public class ItemHighlighter : MonoBehaviour
 		var _spriteRenderer = item.GetComponentInChildren<SpriteRenderer>(true);
 		_spriteRenderer.color = ColorManager.GetColorFromCategoryDark(ColorManager.ItemColor.white);
 		currentlyHighlightedItem = null;
-		currentlyDraggingItem = null;
 	}
 
 	private void HighlightDragging(Item item)

@@ -19,6 +19,7 @@ public class InventoryDepth : MonoBehaviour, InventoryComponent
     }
     public void Setup(InventoryComponents components)
     {
+        return;
         var sprites = GetComponentsInChildren<SpriteRenderer>();
         foreach (var sprite in sprites)
         {

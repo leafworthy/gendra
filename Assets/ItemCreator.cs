@@ -21,11 +21,19 @@ public class ItemCreator : MonoBehaviour
       }
    }
 
-   private Item CreateRandomItem()
+   public Item CreateRandomItem()
    {
       var item = Instantiate(Prefabs.I.ItemPrefab, transform);
       var itemComponent = item.GetComponent<Item>();
       itemComponent.SetIDAndSetupComponents(Random.Range(0, ItemData.Count));
+      return itemComponent;
+   }
+
+   public Item CreateItemFromID(int id)
+   {
+      var item = Instantiate(Prefabs.I.ItemPrefab, transform);
+      var itemComponent = item.GetComponent<Item>();
+      itemComponent.SetIDAndSetupComponents(id);
       return itemComponent;
    }
 }

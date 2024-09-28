@@ -4,14 +4,16 @@ using System.Linq;
 using NaughtyAttributes;
 using UnityEngine;
 
-[ExecuteInEditMode]
+[System.Serializable,ExecuteInEditMode]
 public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 {
 	[SerializeField] private GameObject _itemHolder;
 	private SlotGrid _slotGrid => GetComponentInChildren<SlotGrid>();
-	
+
 	[SerializeField] private GridInfo slotGridInfo;
 	private List<Item> _items => GetComponentsInChildren<Item>().ToList();
+	
+	public List<Item> Items => _items;
 	public GridInfo GetGridInfo() => slotGridInfo;
 	public Grid GetGrid() => _slotGrid;
 
@@ -19,16 +21,14 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	public event Action OnSetupComplete;
 	public event Action OnInventoryChanged;
 
-	
 	public void Setup(ItemData data)
 	{
 		if (_slotGrid == null) return;
 		if (_init) return;
 		_init = true;
-		if(_itemHolder == null)_itemHolder = new GameObject();
+		if (_itemHolder == null) _itemHolder = new GameObject();
 		SetupGrid();
 		OnSetupComplete?.Invoke();
-		
 	}
 
 	private void SetupGrid()
@@ -45,7 +45,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		SetupGrid();
 	}
 
-	private Slot GetSlotAtWorldPosition(Vector2 position)
+	public Slot GetSlotAtWorldPosition(Vector2 position)
 	{
 		var hits = MouseManager.GetObjectsAtPosition<Slot>(position);
 		return hits.Count <= 0 ? null : hits[0];
@@ -101,7 +101,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		var toDestroy = new List<Item>();
 		foreach (var item in _items)
 		{
-			if(item.gameObject == this.gameObject) continue;
+			if (item.gameObject == gameObject) continue;
 			toDestroy.Add(item);
 		}
 
@@ -120,8 +120,6 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 		item.DestroyItem();
 	}
-
-
 
 	private void SetAllSlotsUnoccupied()
 	{
@@ -168,4 +166,12 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		}
 	}
 
+	public void AddItemIntoSpecificSlot(Item item, Slot slot, Direction itemDirection)
+	{
+		item.GetRotation().RotateToDirection(itemDirection);
+		if (MoveItemToSlotAndDragIn(item, slot)) return;
+
+		Debug.Log("item placement failed", this);
+		item.DestroyItem();
+	}
 }

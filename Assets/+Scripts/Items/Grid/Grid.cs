@@ -44,4 +44,9 @@ public class Grid : MonoBehaviour
 			}
 		}
 	}
+
+	public Slot GetSlotAtGridPosition(Vector2 itemGridPosition)
+	{
+		return gridObjects.FirstOrDefault(x => x.GetGridPosition() == itemGridPosition) as Slot;
+	}
 }

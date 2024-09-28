@@ -51628,45 +51628,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 653509785419506081}
     m_Modifications:
-    - target: {fileID: 558503461187461807, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: itemCreator
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3065600061682389388, guid: 144fec211d8604340bf408c705a6671a, type: 3}
       propertyPath: m_Name
       value: Inventory Buttons
-      objectReference: {fileID: 0}
-    - target: {fileID: 3065600061682389388, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4406231130134318114, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2382893418573953694}
-    - target: {fileID: 4406231130134318114, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: AddItem
-      objectReference: {fileID: 0}
-    - target: {fileID: 4406231130134318114, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: AddItemButton, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 4971148502964286543, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: itemCreator
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4971148502964286543, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: numberOfItemsToAdd
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6335975146480420140, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: itemCreator
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 9006478409064756660, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_RootOrder
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9006478409064756660, guid: 144fec211d8604340bf408c705a6671a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -51708,16 +51672,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9086910651777784514, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 7074203084938177662}
-    - target: {fileID: 9086910651777784514, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: AddItem
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6335975146480420140, guid: 144fec211d8604340bf408c705a6671a, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -51727,33 +51682,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3065600061682389388, guid: 144fec211d8604340bf408c705a6671a, type: 3}
   m_PrefabInstance: {fileID: 2797174074782046257}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2382893418573953694 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 558503461187461807, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-  m_PrefabInstance: {fileID: 2797174074782046257}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ac8ed9826b13404cb170c53119a284d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &6497849172582428037 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9006478409064756660, guid: 144fec211d8604340bf408c705a6671a, type: 3}
   m_PrefabInstance: {fileID: 2797174074782046257}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7074203084938177662 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4971148502964286543, guid: 144fec211d8604340bf408c705a6671a, type: 3}
-  m_PrefabInstance: {fileID: 2797174074782046257}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ac8ed9826b13404cb170c53119a284d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &9200043433182327474
 PrefabInstance:
   m_ObjectHideFlags: 0

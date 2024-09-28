@@ -57,7 +57,16 @@ public class Item : MonoBehaviour
 
 	public void RotateCounterClockwise() => OnRotateCounterClockwise?.Invoke();
 
-	public bool IsHovering() => GetMovement().IsDragging();
 
 	public bool CanDrop(IItemContainer inventory) => GetMovement().CanDrop(inventory);
+
+	public Slot GetSlot()
+	{
+		if (itemContainer is ItemSlotInventory inventory)
+		{
+			return inventory.GetSlotAtWorldPosition(GetMovement().GetBottomLeftPosition());
+		}
+
+		return null;
+	}
 }

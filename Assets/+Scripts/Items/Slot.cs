@@ -21,6 +21,8 @@ public class Slot : MonoBehaviour, IGriddable, IItemContainer
 		_spaceGridPos = new Vector2Int(x, y);
 	}
 
+	public Vector2Int GetGridPosition() =>  _spaceGridPos;
+
 	public bool DragIn(Item draggingItem) => Container.DragIn(draggingItem);
 
 	public bool DragOut(Item item) => Container.DragOut(item);

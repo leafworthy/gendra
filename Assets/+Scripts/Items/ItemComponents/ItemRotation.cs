@@ -94,7 +94,7 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 		}
 	}
 
-	private void RotateToDirection(Direction dir)
+	public void RotateToDirection(Direction dir)
 	{
 		currentDirection = dir;
 		setRotation();

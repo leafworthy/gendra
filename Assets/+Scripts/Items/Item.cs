@@ -51,7 +51,12 @@ public class Item : MonoBehaviour
 	}
 
 	public IItemContainer GetInventory() => itemContainer;
-	public void SetInventory(IItemContainer _itemContainer) => itemContainer = _itemContainer;
+	private Vector2Int inventoryPosition;
+	public Vector2Int GetInventoryPosition() => inventoryPosition;
+	public void SetInventory(ItemSlotInventory itemSlotInventory, Slot slot) {
+		 itemContainer = itemSlotInventory;
+		 inventoryPosition = slot.GetGridPos();
+	}
 
 	public void SetPositionMinusRotationOffset(Vector3 newPosition) => GetMovement().SetPositionMinusRotationOffset(newPosition);
 

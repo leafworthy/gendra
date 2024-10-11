@@ -11,12 +11,14 @@ public enum Direction
 public class ItemMovement : MonoBehaviour
 {
 	private Vector2 originalPosition;
+	private Vector2Int originalGridPosition;
+	
 	private Vector2 mouseOffset;
 	private Item _item => GetComponent<Item>();
 	private IItemContainer originalItemContainer;
+	
 	private IItemContainer currentItemContainer;
 	private bool _isDragging;
-	private Direction _item_originalDirection;
 
 	public bool IsDragging() => _isDragging;
 
@@ -43,6 +45,7 @@ public class ItemMovement : MonoBehaviour
 	{
 		_isDragging = true;
 		originalPosition = _item.transform.position;
+		originalGridPosition = _item.GetInventoryPosition();
 		originalItemContainer = _item.GetInventory();
 		originalItemContainer?.DragOut(_item);
 		mouseOffset = MouseManager.GetMouseWorldPosition() - (Vector2) _item.transform.position;
@@ -71,7 +74,7 @@ public class ItemMovement : MonoBehaviour
 	{
 		_isDragging = false;
 		_item.GetRotation().RotateItemBack();
-		transform.position = originalPosition;
+		transform.position =  originalPosition;
 		if (originalItemContainer != null) originalItemContainer.DragIn(_item);
 	}
 

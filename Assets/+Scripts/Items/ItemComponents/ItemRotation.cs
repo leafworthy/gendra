@@ -94,11 +94,11 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 		}
 	}
 
-	public void RotateToDirection(Direction dir)
+	public void RotateToDirection(Direction dir, bool SetOffset = true)
 	{
 		currentDirection = dir;
 		setRotation();
-		_item.GetMovement().SetMouseOffset(GetCenterRotationOffset());
+		if (SetOffset) _item.GetMovement().SetMouseOffset(GetCenterRotationOffset());
 	}
 
 	private void setRotation()

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-
 
 public class MouseManager : MonoBehaviour
 {
@@ -10,21 +8,18 @@ public class MouseManager : MonoBehaviour
 
 	private static bool isPressing;
 	private static bool isRightPressing;
-	
+
+	private MouseInteraction hoveredItem;
+	private MouseInteraction draggingItem;
+
 	public static event Action OnPress;
 	public static event Action OnRelease;
 	public static event Action OnRightRelease;
 	public static event Action OnRightPress;
+	private static RaycastHit2D[] GetHitsAtPosition() => Physics2D.LinecastAll(GetMouseWorldPosition(), GetMouseWorldPosition());
+	public static Vector2 GetMouseWorldPosition() => mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
-	public static Vector2 GetMouseWorldPosition()
-	{
-		return mainCamera.ScreenToWorldPoint(Input.mousePosition);
-	}
-
-	public static List<T> GetObjectsAtMousePosition<T>()
-	{
-		return GetObjectsAtPosition<T>(GetMouseWorldPosition());
-	}
+	public static List<T> GetObjectsAtMousePosition<T>() => GetObjectsAtPosition<T>(GetMouseWorldPosition());
 
 	public static List<T> GetObjectsAtPosition<T>(Vector2 position)
 	{
@@ -32,64 +27,161 @@ public class MouseManager : MonoBehaviour
 		var list = new List<T>();
 		foreach (var hit in cast)
 		{
-			 var components = hit.collider.GetComponents<T>();
-			 if (components.Length <= 0) continue;
-			 list.AddRange(components);
+			var components = hit.collider.GetComponents<T>();
+			if (components.Length <= 0) continue;
+			list.AddRange(components);
 		}
 
 		return list;
 	}
 
-	private static string ListString<T>(List<T> list)
-	{
-		var s = "";
-		foreach (var item in list)
-		{
-			s += item + ", ";
-		}
-
-		return s;
-	}
 
 	private void Update()
 	{
-		CheckForPress();
-		CheckForRightPress();
+		TestForPress();
+		TestForRightPress();
 	}
 
-	private void CheckForPress()
+	private void TestForPress()
 	{
 		if (Input.GetMouseButton(0))
 		{
-			if (isPressing) return;
-			isPressing = true;
+			if (isPressing)
+			{
+				Drag();
+				return ;
+			}
 
-			OnPress?.Invoke();
+			isPressing = true;
+			Press();
 		}
 		else
 		{
-			if (!isPressing) return;
+			if (!isPressing)
+			{
+				Hover();
+				return ;
+			}
+
 			isPressing = false;
-			OnRelease?.Invoke();
+			Release();
 		}
+
+		return ;
 	}
 
-	private void CheckForRightPress()
+	private void TestForRightPress()
 	{
 		if (Input.GetMouseButton(1))
 		{
-			if (isRightPressing) return;
+			if (isRightPressing)
+			{
+				RightDrag();
+				return ;
+			}
+
 			isRightPressing = true;
-			OnRightPress?.Invoke();
+			RightPress();
 		}
 		else
 		{
-			if (!isRightPressing) return;
+			
 			isRightPressing = false;
-
-			OnRightRelease?.Invoke();
+			RightRelease();
 		}
 	}
 
+	private void Drag()
+	{
+		if (draggingItem == null) return;
+		draggingItem.OnMouseDragging();
+	}
+
+	private void RightDrag()
+	{
+		if (draggingItem == null) return;
+		draggingItem.OnMouseRightDrag();
+	}
+
+	private void Release()
+	{
+		
+		var hits = GetHitsAtPosition();
+		Debug.Log("release here");
+		OnRelease?.Invoke();
+		foreach (var hit2D in hits)
+		{
+			var item = hit2D.collider.GetComponent<MouseInteraction>();
+			if (item == null) continue;
+			item.OnMouseRelease();
+		}
+
+		if (draggingItem == null) return;
+		draggingItem.OnMouseRelease();
+		draggingItem = null;
+	}
+
+	private void RightRelease()
+	{
+		
+		var hits = GetHitsAtPosition();
+		OnRightRelease?.Invoke();
+		foreach (var hit2D in hits)
+		{
+			var item = hit2D.collider.GetComponent<MouseInteraction>();
+			if (item == null) continue;
+			item.OnMouseRightRelease();
+		}
+
+		if (draggingItem == null) return;
+		draggingItem.OnMouseRightRelease();
+		draggingItem = null;
+	}
+
+	private void Hover()
+	{
+		var interactions = GetObjectsAtMousePosition<MouseInteraction>();
+		foreach (var interaction in interactions)
+		{
+			if (hoveredItem == interaction) return;
+			if (hoveredItem != null) hoveredItem.OnMouseUnhover();
+
+			hoveredItem = interaction;
+			hoveredItem.OnMouseHover();
+			return;
+		}
+
+		if (hoveredItem == null) return;
+		hoveredItem.OnMouseUnhover();
+		hoveredItem = null;
+	}
+
+	private void Press()
+	{
+		var hits = GetHitsAtPosition();
+		OnPress?.Invoke();
+		foreach (var hit2D in hits)
+		{
+			var item = hit2D.collider.GetComponent<MouseInteraction>();
+			if (item == null) continue;
+			draggingItem = item;
+
+			draggingItem.OnMousePress();
+			return;
+		}
+	}
+
+	private void RightPress()
+	{
+		var interactions = GetObjectsAtMousePosition<MouseInteraction>();
+		OnRightPress?.Invoke();
+		foreach (var interaction in interactions)
+		{
+			draggingItem = interaction;
+			draggingItem.OnMouseRightPress();
+			return;
+		}
+	}
 
 }
+

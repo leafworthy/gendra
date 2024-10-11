@@ -1,5 +1,13 @@
+using System;
 using System.Linq;
 using UnityEngine;
+
+public interface IInventoryCommand
+{
+	public void Redo();
+	public void Undo();
+}
+
 
 public class ItemMover : MonoBehaviour
 {
@@ -8,6 +16,9 @@ public class ItemMover : MonoBehaviour
 	private Vector2 _item_mouseOffset;
 	private IItemContainer itemOriginalItemContainer;
 	private Direction _item_originalDirection;
+	public static event Action<Item> OnItemStopDragging;
+	public static event Action<Item> OnItemStartDragging;
+	public static event Action<Item> OnItemRotateCounterClockwise;
 
 	private void OnEnable()
 	{
@@ -29,8 +40,14 @@ public class ItemMover : MonoBehaviour
 
 	private void StopDraggingItem()
 	{
-		if (_item == null) return;
+		if (_item == null)
+		{
+			Debug.Log("no item to stop dragging");
+			return;
+		}
+		Debug.Log("stop dragging");
 		_item.StopDragging();
+		OnItemStopDragging?.Invoke(_item);
 		_item = null;
 	}
 
@@ -38,13 +55,19 @@ public class ItemMover : MonoBehaviour
 	{
 		if (_item == null) return;
 		_item.RotateCounterClockwise();
+		OnItemRotateCounterClockwise?.Invoke(_item);
 	}
 
 	private void OnPress()
 	{
+		Debug.Log("on press here");
 		var draggableItemsAtMousePosition = GetItemGridSpaceAtMousePosition();
 
-		if (draggableItemsAtMousePosition != null) StartDraggingItem(draggableItemsAtMousePosition.GetComponentInParent<Item>());
+		if (draggableItemsAtMousePosition != null)
+		{
+			Debug.Log( "start dragging item" + draggableItemsAtMousePosition.GetItem().GetData().itemID);
+			StartDraggingItem(draggableItemsAtMousePosition.GetComponentInParent<Item>());
+		}
 	}
 
 	private static ItemGridSpace GetItemGridSpaceAtMousePosition()
@@ -57,6 +80,8 @@ public class ItemMover : MonoBehaviour
 	{
 		_item = newDraggingItem;
 		_item.transform.SetParent(null);
+		Debug.Log("start dragging");
 		_item.StartDragging();
+		OnItemStartDragging?.Invoke(_item);
 	}
 }

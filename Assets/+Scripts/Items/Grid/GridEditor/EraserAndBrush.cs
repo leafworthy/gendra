@@ -5,7 +5,6 @@ public class EraserAndBrush : Singleton<EraserAndBrush>
 {
 	private GameObject eraser => FindObjectOfType<Eraser>(true).gameObject;
 	private GameObject brush => FindObjectOfType<Brush>(true).gameObject;
-	private MouseManager mouseManager => FindObjectsOfType<MonoBehaviour>().OfType<MouseManager>().FirstOrDefault();
 
 	public void Erase(Vector2 mousePosition)
 	{

@@ -24,4 +24,11 @@ public class SlotGrid : Grid
 			slot.SetDisabled();
 		}
 	}
+
+	public Slot GetSlotFromGridPosition(Vector2Int newPosition)
+	{   
+		var slot = slots.FirstOrDefault(s => s.GetGridPos() == newPosition);
+		if (slot == null) Debug.Log("slot null");
+		return slot;
+	}
 }

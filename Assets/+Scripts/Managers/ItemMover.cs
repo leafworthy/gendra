@@ -2,23 +2,15 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-public interface IInventoryCommand
-{
-	public void Redo();
-	public void Undo();
-}
-
-
 public class ItemMover : MonoBehaviour
 {
-	private Item _item;
-	private Vector2 _item_originalPosition;
-	private Vector2 _item_mouseOffset;
-	private IItemContainer itemOriginalItemContainer;
-	private Direction _item_originalDirection;
+	private Item _draggingItem;
+	private Vector2Int _originalPosition;
+	private Vector2 _mouseDragOffset;
+	private ItemSlotInventory _originalItemContainer;
+	private Direction _originalDirection;
 	public static event Action<Item> OnItemStopDragging;
 	public static event Action<Item> OnItemStartDragging;
-	public static event Action<Item> OnItemRotateCounterClockwise;
 
 	private void OnEnable()
 	{
@@ -38,36 +30,64 @@ public class ItemMover : MonoBehaviour
 
 	private void OnRelease() => StopDraggingItem();
 
+	private void Update()
+	{
+		if (_draggingItem != null) _draggingItem.transform.position = MouseManager.GetMouseWorldPosition() - _mouseDragOffset;
+	}
+
 	private void StopDraggingItem()
 	{
-		if (_item == null)
+		Debug.Log("stop dragging");
+		if (_draggingItem == null)
 		{
-			Debug.Log("no item to stop dragging");
+			Debug.Log("no item");
 			return;
 		}
-		Debug.Log("stop dragging");
-		_item.StopDragging();
-		OnItemStopDragging?.Invoke(_item);
-		_item = null;
+
+		var slotsAtMousePosition = MouseManager.GetObjectsAtMousePosition<Slot>();
+		if (slotsAtMousePosition.Count <= 0)
+		{
+			Debug.Log("no slot");
+			DragItemBack();
+		}
+		else
+		{
+			Debug.Log("slot");
+			var slot = slotsAtMousePosition[0];
+			if (slot == null)
+			{
+				DragItemBack();
+				return;
+			}
+
+			if (!slot.DragIn(_draggingItem)) DragItemBack();
+		}
+
+		OnItemStopDragging?.Invoke(_draggingItem);
+		_draggingItem.IsDragging = false;
+		_draggingItem = null;
+	}
+
+	private void DragItemBack()
+	{
+		_draggingItem.RotateToDirection(_originalDirection);
+		if(_originalItemContainer == null) return;
+		_draggingItem.SetPositionWithOffset(_originalItemContainer.GetSlotFromGridPosition(_originalPosition).transform.position);
+		_originalItemContainer?.DragIn(_draggingItem);
 	}
 
 	private void RotateItemCounterClockwise()
 	{
-		if (_item == null) return;
-		_item.RotateCounterClockwise();
-		OnItemRotateCounterClockwise?.Invoke(_item);
+		if (_draggingItem == null) return;
+		_draggingItem.RotateItemCounterClockwise();
+		_mouseDragOffset = _draggingItem.GetCenterRotationOffset();
 	}
 
 	private void OnPress()
 	{
-		Debug.Log("on press here");
 		var draggableItemsAtMousePosition = GetItemGridSpaceAtMousePosition();
-
-		if (draggableItemsAtMousePosition != null)
-		{
-			Debug.Log( "start dragging item" + draggableItemsAtMousePosition.GetItem().GetData().itemID);
-			StartDraggingItem(draggableItemsAtMousePosition.GetComponentInParent<Item>());
-		}
+		if (draggableItemsAtMousePosition == null) return;
+		StartDraggingItem(draggableItemsAtMousePosition.GetComponentInParent<Item>());
 	}
 
 	private static ItemGridSpace GetItemGridSpaceAtMousePosition()
@@ -78,10 +98,13 @@ public class ItemMover : MonoBehaviour
 
 	private void StartDraggingItem(Item newDraggingItem)
 	{
-		_item = newDraggingItem;
-		_item.transform.SetParent(null);
-		Debug.Log("start dragging");
-		_item.StartDragging();
-		OnItemStartDragging?.Invoke(_item);
+		_draggingItem = newDraggingItem;
+		_draggingItem.IsDragging = true;
+		_originalPosition = _draggingItem.GetInventoryPosition();
+		_originalDirection = _draggingItem.GetRotation().GetDirection();
+		_originalItemContainer = _draggingItem.GetInventory();
+		_originalItemContainer?.DragOut(_draggingItem);
+		_mouseDragOffset = MouseManager.GetMouseWorldPosition() - (Vector2) _draggingItem.transform.position;
+		OnItemStartDragging?.Invoke(_draggingItem);
 	}
 }

@@ -1,38 +1,14 @@
 using UnityEngine;
 
-public class ItemGraphic : MonoBehaviour, ItemComponent
+public class ItemDragHighlight : MonoBehaviour
 {
-	private bool _isDragging;
 	private Item _item => GetComponent<Item>();
-	public ColorManager.ItemColor GetColor() => _item.GetData().itemColor;
-
-	private void OnEnable()
-	{
-		_item.OnDragStart += StartDragging;
-		_item.OnDragStop += StopDragging;
-	}
-
-	private void OnDisable()
-	{
-		_item.OnDragStart -= StartDragging;
-		_item.OnDragStop -= StopDragging;
-	}
-
-	private void StartDragging()
-	{
-		_isDragging = true;
-		DragDropIndicatorHighlight();
-	}
+	
 
 	private void Update()
 	{
-		if (_isDragging) DragDropIndicatorHighlight();
-	}
-
-	private void StopDragging()
-	{
-		_isDragging = false;
-		DragDropIndicatorUnHighlight();
+		if (_item.IsDragging) DragDropIndicatorHighlight();
+		else if (_item.IsDragging) DragDropIndicatorUnHighlight();
 	}
 
 	private void DragDropIndicatorHighlight()
@@ -90,14 +66,5 @@ public class ItemGraphic : MonoBehaviour, ItemComponent
 		}
 	}
 
-	private void DragItemBack()
-	{
-		_isDragging = false;
-		DragDropIndicatorUnHighlight();
-	}
 
-	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
-	private void SetSpriteByID(int itemID) => _spriteRenderer.sprite = ItemData.GetSpriteByID(itemID);
-
-	public void Setup(ItemData data) => SetSpriteByID(data.itemID);
 }

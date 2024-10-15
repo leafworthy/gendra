@@ -4,7 +4,7 @@ using System.Linq;
 using NaughtyAttributes;
 using UnityEngine;
 
-[System.Serializable,ExecuteInEditMode]
+[Serializable, ExecuteInEditMode]
 public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 {
 	[SerializeField] private GameObject _itemHolder;
@@ -12,7 +12,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	[SerializeField] private GridInfo slotGridInfo;
 	private List<Item> _items => GetComponentsInChildren<Item>().ToList();
-	
+
 	public List<Item> Items => _items;
 	public GridInfo GetGridInfo() => slotGridInfo;
 	public Grid GetGrid() => _slotGrid;
@@ -53,17 +53,11 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	public bool DragIn(Item item)
 	{
-		var slot = GetSlotAtWorldPosition(item.GetMovement().GetBottomLeftPosition());
-		Debug.Log("trying to drag in"+item.name + " to slot at "+slot.GetGridPos() + " in inventory "+this.name);
-		if (slot == null)
-		{
-			Debug.Log("slot null");
-			return false;
-		}
+		var slot = GetSlotAtWorldPosition(item.GetBottomLeftPosition());
+		if (slot == null) return false;
 
 		if (item.CanDrop(this))
 		{
-			Debug.Log("can drop");
 			AddItemToInventory(item, slot);
 			return true;
 		}
@@ -75,8 +69,8 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	private void AddItemToInventory(Item item, Slot slot)
 	{
 		item.transform.SetParent(_itemHolder.transform);
-		item.SetPositionMinusRotationOffset(slot.transform.position);
-		item.SetInventory(this, slot);
+		item.SetPositionWithOffset(slot.transform.position);
+		item.SetSlot(slot);
 		OccupyHoveredSlots(item);
 
 		_items.Add(item);
@@ -133,7 +127,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	private bool MoveItemToSlotAndDragIn(Item item, Slot slot)
 	{
-		item.GetMovement().SetPositionMinusRotationOffset(slot.transform.position);
+		item.SetPositionWithOffset(slot.transform.position);
 		return DragIn(item);
 	}
 

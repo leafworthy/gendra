@@ -15,7 +15,7 @@ public class Slot : MonoBehaviour, IGriddable, IItemContainer
 	private bool _isDisabled;
 	public bool IsDisabled => _isDisabled;
 
-	public IItemContainer GetInventory() => Container;
+	public ItemSlotInventory GetInventory() => Container;
 	public void SetGridPosition(int x, int y)
 	{
 		_spaceGridPos = new Vector2Int(x, y);

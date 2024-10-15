@@ -21,7 +21,7 @@ public class ItemGridDesigner : MonoBehaviour
 		dataIndex = itemDataID;
 
 		item.SetIDAndSetupComponents(itemDataID);
-		item.SetInventory(null, null);
+		item.SetSlot(null);
 		MakeNewUnsavedDataAndCopyCurrentItem();
 	}
 

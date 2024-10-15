@@ -1,5 +1,10 @@
 using UnityEngine;
 
+public interface IInventoryCommand
+{
+	public void Redo();
+	public void Undo();
+}
 public class MoveCommand : IInventoryCommand
 {
 
@@ -20,7 +25,7 @@ public class MoveCommand : IInventoryCommand
 	public void Redo()
 	{
 		OriginalInventory.DragOut(Item);
-		Item.GetRotation().RotateToDirection(NewDirection, false);
+		Item.RotateToDirection(NewDirection);
 		Item.transform.position = (Vector2) NewInventory.GetSlotFromGridPosition(NewPosition).transform.position-Item.GetRotation().GetRotationOffset();
 
 		NewInventory.DragIn(Item);
@@ -29,7 +34,7 @@ public class MoveCommand : IInventoryCommand
 	public void Undo()
 	{
 		NewInventory.DragOut(Item);
-		Item.GetRotation().RotateToDirection(OriginalDirection, true);
+		Item.RotateToDirection(OriginalDirection);
 		Item.transform.position = (Vector2) OriginalInventory.GetSlotFromGridPosition(OriginalPosition).transform.position -
 		                          Item.GetRotation().GetRotationOffset();
 		

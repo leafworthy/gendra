@@ -1,40 +1,19 @@
 using System;
 using UnityEngine;
 
+public class ItemRotator : MonoBehaviour
+{
+	
+}
 public class ItemRotation : MonoBehaviour,ItemComponent
 {
 	public Direction GetDirection() => currentDirection;
 	private Item _item => GetComponent<Item>();
 	private Direction currentDirection = Direction.Up;
-	private Direction _originalDirection;
 
 	public void Setup(ItemData data)
 	{
-		setRotation();
-	}
-
-	private void OnEnable()
-	{
-		_item.OnDragStart += StartDraggingItem;
-		_item.OnRotateCounterClockwise += RotateItemCounterClockwise;
-	}
-
-	private void OnDisable()
-	{
-		_item.OnDragStart -= StartDraggingItem;
-		_item.OnRotateCounterClockwise -= RotateItemCounterClockwise;
-	}
-
-	public void RotateItemBack()
-	{
-		RotateToDirection(_originalDirection);
-	}
-
-	
-
-	private void StartDraggingItem()
-	{
-		_originalDirection = currentDirection;
+		setRotationEulerAngles();
 	}
 
 	public Vector2 GetRotationOffset()
@@ -67,12 +46,12 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 	{
 		var gridInfo = _item.Grid.GetGridInfo();
 		 if(gridInfo == null) return Vector2.zero;
-		if (currentDirection == Direction.Up || currentDirection == Direction.Down)
+		if (currentDirection is Direction.Up or Direction.Down)
 			return gridInfo.GetCenterOffset() + GetRotationOffset();
 		return gridInfo.GetReverseCenterOffset() + GetRotationOffset();
 	}
 
-	private void RotateItemCounterClockwise()
+	public void RotateItemCounterClockwise()
 	{
 		_item.transform.rotation = Quaternion.Euler(0, 0, _item.transform.rotation.eulerAngles.z + 90);
 		switch (currentDirection)
@@ -94,14 +73,13 @@ public class ItemRotation : MonoBehaviour,ItemComponent
 		}
 	}
 
-	public void RotateToDirection(Direction dir, bool SetOffset = true)
+	public void RotateToDirection(Direction dir)
 	{
 		currentDirection = dir;
-		setRotation();
-		if (SetOffset) _item.GetMovement().SetMouseOffset(GetCenterRotationOffset());
+		setRotationEulerAngles();
 	}
 
-	private void setRotation()
+	private void setRotationEulerAngles()
 	{
 		switch (currentDirection)
 		{

@@ -21,7 +21,7 @@ public class ItemHighlighter : MonoBehaviour
 			if(currentlyDraggingItem != null) UnHighlightDragging(currentlyDraggingItem);
 			return;
 		}
-		if (currentlyHighlightedItem.GetMovement().IsDragging())
+		if (currentlyHighlightedItem.IsDragging)
 		{
 			if (currentlyDraggingItem == currentlyHighlightedItem) return;
 			currentlyDraggingItem = currentlyHighlightedItem;

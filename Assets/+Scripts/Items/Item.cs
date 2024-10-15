@@ -1,35 +1,25 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-	private IItemContainer itemContainer;
-	private Vector2 _mouseOffset;
-	public int GetID() => _itemID;
-	[SerializeField] private int _itemID;
 	private bool _init;
+	private Slot _slot;
+	[SerializeField] private int _itemID;
+	public int GetID() => _itemID;
 	public ItemData GetData() => ItemData.GetItemData(GetID());
-
-	public event Action OnRotateCounterClockwise;
-	public event Action OnDragStart;
-	public event Action OnDragStop;
-
-	public void StartDragging() => OnDragStart?.Invoke();
-	public void StopDragging() => OnDragStop?.Invoke();
+	public ColorManager.ItemColor GetColor() => GetData().itemColor;
+	public Vector2 GetCenterRotationOffset() => GetRotation().GetCenterRotationOffset();
 	public ItemSpaceGrid Grid => GetComponentsInChildren<ItemSpaceGrid>(true)[0];
-
-	public ItemMovement GetMovement() => GetComponentsInChildren<ItemMovement>(true)[0];
-
 	public ItemRotation GetRotation() => GetComponentsInChildren<ItemRotation>(true)[0];
-
-	private ItemGraphic GetGraphic() => GetComponentsInChildren<ItemGraphic>(true)[0];
-	public ColorManager.ItemColor GetColor() => GetGraphic().GetColor();
-
 	private List<ItemComponent> _itemComponents => GetComponentsInChildren<ItemComponent>().ToList();
-
-	
+	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
+	private void SetSpriteByID(int itemID) => _spriteRenderer.sprite = ItemData.GetSpriteByID(itemID);
+	public ItemSlotInventory GetInventory() => _slot?.GetInventory();
+	private Vector2Int inventoryPosition;
+	public bool IsDragging;
+	public Vector2Int GetInventoryPosition() => inventoryPosition;
 
 	public void Setup()
 	{
@@ -41,6 +31,7 @@ public class Item : MonoBehaviour
 	public void SetIDAndSetupComponents(int itemID)
 	{
 		_itemID = itemID;
+		SetSpriteByID(itemID);
 		Setup();
 	}
 
@@ -50,28 +41,52 @@ public class Item : MonoBehaviour
 		gameObject.DestroySafely();
 	}
 
-	public IItemContainer GetInventory() => itemContainer;
-	private Vector2Int inventoryPosition;
-	public Vector2Int GetInventoryPosition() => inventoryPosition;
-	public void SetInventory(ItemSlotInventory itemSlotInventory, Slot slot) {
-		 itemContainer = itemSlotInventory;
-		 inventoryPosition = slot.GetGridPos();
+	public void SetSlot(Slot slot)
+	{
+		_slot = slot;
+		inventoryPosition = _slot.GetGridPos();
 	}
 
-	public void SetPositionMinusRotationOffset(Vector3 newPosition) => GetMovement().SetPositionMinusRotationOffset(newPosition);
+	public Slot GetSlot() =>  _slot;
 
-	public void RotateCounterClockwise() => OnRotateCounterClockwise?.Invoke();
+	public void RotateItemCounterClockwise() => GetRotation().RotateItemCounterClockwise();
+	public void RotateToDirection(Direction newDirection) => GetRotation().RotateToDirection(newDirection);
 
-
-	public bool CanDrop(IItemContainer inventory) => GetMovement().CanDrop(inventory);
-
-	public Slot GetSlot()
+	public Vector2 GetBottomLeftPosition()
 	{
-		if (itemContainer is ItemSlotInventory inventory)
+		var itemSpaceGrid = Grid;
+		return GetRotation().GetDirection() switch
+		       {
+			       Direction.Up => itemSpaceGrid.GetSpaceByGridPosition(0, 0).transform.position,
+			       Direction.Left => itemSpaceGrid.GetSpaceByGridPosition(0, itemSpaceGrid.GetGridInfo().Height - 1).transform.position,
+			       Direction.Down => itemSpaceGrid.GetSpaceByGridPosition(itemSpaceGrid.GetGridInfo().Width - 1,
+				       itemSpaceGrid.GetGridInfo().Height - 1).transform.position,
+			       Direction.Right => itemSpaceGrid.GetSpaceByGridPosition(itemSpaceGrid.GetGridInfo().Width - 1, 0).transform.position,
+			       _ => Vector2.zero
+		       };
+	}
+
+	public void SetPositionWithOffset(Vector2 transformPosition)
+	{
+		transform.position = transformPosition - GetRotation().GetRotationOffset();
+	}
+	public bool CanDrop(IItemContainer destinationInventory)
+	{
+		if (destinationInventory == null) return false;
+		var pointsToTest = Grid.GetWorldPositionsOfFullSpaces();
+		foreach (var point in pointsToTest)
 		{
-			return inventory.GetSlotAtWorldPosition(GetMovement().GetBottomLeftPosition());
+			var slots = MouseManager.GetObjectsAtPosition<Slot>(point);
+			if (slots.Count <= 0) return false;
+
+			foreach (var slot in slots)
+			{
+				if (slot.GetInventory() != destinationInventory) continue;
+
+				if (!slots[0].IsUnoccupied || slots[0].IsDisabled) return false;
+			}
 		}
 
-		return null;
+		return true;
 	}
 }

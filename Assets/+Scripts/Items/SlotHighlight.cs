@@ -69,7 +69,7 @@ public class SlotHighlight : MonoBehaviour
 		foreach (var space in itemSpaces)
 		{
 			if (space.IsEmptySpace) continue;
-			if (space.GetItem().GetMovement().IsDragging()) SetSlotHoveredBy(space.GetItem());
+			if (space.GetItem().IsDragging) SetSlotHoveredBy(space.GetItem());
 			return;
 		}
 

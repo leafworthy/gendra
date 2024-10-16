@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class AddItemButton : MonoBehaviour
 {
-	public ItemCreator itemCreator => GetComponentInParent<ItemCreator>();
+
 	public int numberOfItemsToAdd = 1;
+	private ItemSlotInventory inventory => GetComponentInParent<ItemSlotInventory>();
 
 	
 	public void AddItem()
 	{
-		for (var i = 0; i < numberOfItemsToAdd; i++) itemCreator.AddRandomItem();
+		for (var i = 0; i < numberOfItemsToAdd; i++) ItemCreator.AddRandomItemToInventory(inventory);
 	}
 
 }

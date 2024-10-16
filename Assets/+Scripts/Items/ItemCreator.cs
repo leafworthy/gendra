@@ -1,37 +1,43 @@
+using System;
 using NaughtyAttributes;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ItemCreator : MonoBehaviour
 {
-   [SerializeField]private ItemSlotInventory Inventory;
 
-   [Button]
-   public void AddRandomItem()
+   public static void AddRandomItemToInventory(ItemSlotInventory inventory)
    {
-      var item = CreateRandomItem();
-      Inventory.AddItemIntoEmptySlot(item);
+      var item = CreateRandomItem(inventory);
+      if (inventory.PlaceInFirstOpenSlot(item))
+      {
+        
+         return;
+      }
+      
+      item.DestroyItem();
    }
 
-   [Button]
-   public void Add10RandomItems()
+   public static void Add10RandomItems(ItemSlotInventory inventory)
    {
       for (int i = 0; i < 10; i++)
       {
-         AddRandomItem();
+         AddRandomItemToInventory(inventory);
       }
    }
 
-   public Item CreateRandomItem()
+   public static Item CreateRandomItem(ItemSlotInventory inventory)
    {
-      var item = Instantiate(Prefabs.I.ItemPrefab, transform);
+      var item = Instantiate(Prefabs.I.ItemPrefab, inventory.transform);
       var itemComponent = item.GetComponent<Item>();
       itemComponent.SetIDAndSetupComponents(Random.Range(0, ItemData.Count));
+     
       return itemComponent;
    }
 
-   public Item CreateItemFromID(int id)
+   public static Item CreateItemFromID(int id, ItemSlotInventory inventory)
    {
-      var item = Instantiate(Prefabs.I.ItemPrefab, transform);
+      var item = Instantiate(Prefabs.I.ItemPrefab, inventory.transform);
       var itemComponent = item.GetComponent<Item>();
       itemComponent.SetIDAndSetupComponents(id);
       return itemComponent;

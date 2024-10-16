@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NaughtyAttributes;
 using UnityEngine;
 
 [Serializable, ExecuteInEditMode]
-public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
+public class ItemSlotInventory : MonoBehaviour, ItemComponent
 {
 	[SerializeField] private GameObject _itemHolder;
 	private SlotGrid _slotGrid => GetComponentInChildren<SlotGrid>();
@@ -18,8 +19,10 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	public Grid GetGrid() => _slotGrid;
 
 	private bool _init;
+	public static event Action<Item, ItemSlotInventory> OnItemDraggedOut;
 	public event Action OnSetupComplete;
 	public event Action OnInventoryChanged;
+	public static event Action<Item, ItemSlotInventory> OnItemDraggedIn;
 
 	public void Setup(ItemData data)
 	{
@@ -59,6 +62,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		if (item.CanDrop(this))
 		{
 			AddItemToInventory(item, slot);
+			OnItemDraggedIn?.Invoke(item, this);
 			return true;
 		}
 
@@ -69,7 +73,6 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	private void AddItemToInventory(Item item, Slot slot)
 	{
 		item.transform.SetParent(_itemHolder.transform);
-		item.SetPositionWithOffset(slot.transform.position);
 		item.SetSlot(slot);
 		OccupyHoveredSlots(item);
 
@@ -80,6 +83,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 	public bool DragOut(Item item)
 	{
 		UnoccupyHoveredSlots(item);
+		OnItemDraggedOut?.Invoke(item, this);
 		item.transform.SetParent(null);
 		_items.Remove(item);
 		OnInventoryChanged?.Invoke();
@@ -107,15 +111,6 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		}
 	}
 
-	public void AddItemIntoEmptySlot(Item item)
-	{
-		foreach (var slot in _slotGrid.GetSlots())
-		{
-			if (MoveItemToSlotAndDragIn(item, slot)) return;
-		}
-
-		item.DestroyItem();
-	}
 
 	private void SetAllSlotsUnoccupied()
 	{
@@ -125,14 +120,9 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		}
 	}
 
-	private bool MoveItemToSlotAndDragIn(Item item, Slot slot)
-	{
-		item.SetPositionWithOffset(slot.transform.position);
-		return DragIn(item);
-	}
-
 	private void OccupyHoveredSlots(Item item)
 	{
+		Debug.Log("occupy");
 		foreach (var slot in GetHoveredSlots(item))
 		{
 			slot.SetOccupied(item);
@@ -141,7 +131,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	private List<Slot> GetHoveredSlots(Item item)
 	{
-		var pointsToTest = item.Grid.GetWorldPositionsOfFullSpaces();
+		var pointsToTest = item.GetWorldPositionsOfFullSpaces();
 		var hoveredSlots = new List<Slot>();
 		foreach (var point in pointsToTest)
 		{
@@ -155,6 +145,7 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 
 	private void UnoccupyHoveredSlots(Item item)
 	{
+		Debug.Log("unoccupy");
 		foreach (var slot in GetHoveredSlots(item))
 		{
 			if (slot.GetInventory() != item.GetInventory()) continue;
@@ -162,14 +153,20 @@ public class ItemSlotInventory : MonoBehaviour, IItemContainer, ItemComponent
 		}
 	}
 
-	public void AddItemIntoSpecificSlot(Item item, Slot slot, Direction itemDirection)
-	{
-		item.GetRotation().RotateToDirection(itemDirection);
-		if (MoveItemToSlotAndDragIn(item, slot)) return;
+	public Slot GetSlotFromGridPosition(Vector2Int newPosition) => _slotGrid.GetSlotFromGridPosition(newPosition);
 
-		Debug.Log("item placement failed", this);
-		item.DestroyItem();
+	public List<Slot> GetSlots() => _slotGrid.GetSlots();
+
+	public bool PlaceInFirstOpenSlot(Item item)
+	{
+		foreach (var slot in GetSlots())
+		{
+			ItemMover.MoveItemToSlot(item, slot);
+			if (DragIn(item)) return true;
+		}
+		return false;
 	}
 
-	public Slot GetSlotFromGridPosition(Vector2Int newPosition) => _slotGrid.GetSlotFromGridPosition(newPosition);
+	public Slot GetSlotAtGridPosition(Vector2Int itemSlotPosition) => _slotGrid.GetSlotFromGridPosition(itemSlotPosition);
+	
 }

@@ -9,8 +9,10 @@ public class MouseManager : MonoBehaviour
 	private static bool isPressing;
 	private static bool isRightPressing;
 
-	private MouseInteraction hoveredItem;
-	private MouseInteraction draggingItem;
+	private static MouseInteraction hoveredItem;
+	public static MouseInteraction HoveredItem => hoveredItem;
+	private static MouseInteraction draggingItem;
+	public static MouseInteraction DraggingItem => draggingItem;
 
 	public static event Action OnPress;
 	public static event Action OnRelease;

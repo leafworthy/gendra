@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,27 +6,45 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
 	private bool _init;
-	private Slot _slot;
 	[SerializeField] private int _itemID;
 	public int GetID() => _itemID;
+	private void SetSpriteByID(int itemID) => _spriteRenderer.sprite = ItemData.GetSpriteByID(itemID);
 	public ItemData GetData() => ItemData.GetItemData(GetID());
 	public ColorManager.ItemColor GetColor() => GetData().itemColor;
-	public Vector2 GetCenterRotationOffset() => GetRotation().GetCenterRotationOffset();
-	public ItemSpaceGrid Grid => GetComponentsInChildren<ItemSpaceGrid>(true)[0];
-	public ItemRotation GetRotation() => GetComponentsInChildren<ItemRotation>(true)[0];
-	private List<ItemComponent> _itemComponents => GetComponentsInChildren<ItemComponent>().ToList();
-	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
-	private void SetSpriteByID(int itemID) => _spriteRenderer.sprite = ItemData.GetSpriteByID(itemID);
-	public ItemSlotInventory GetInventory() => _slot?.GetInventory();
-	private Vector2Int inventoryPosition;
-	public bool IsDragging;
-	public Vector2Int GetInventoryPosition() => inventoryPosition;
+	
+	//ITEM SPACE GRID
+	private ItemSpaceGrid Grid => GetComponentsInChildren<ItemSpaceGrid>(true)[0];
+	public GridInfo GetGridInfo() => Grid.GetGridInfo();
+	public List<Vector2> GetWorldPositionsOfFullSpaces() => Grid.GetWorldPositionsOfFullSpaces();
 
+	public List<Vector2Int> GetEmptyGridSpaces() => Grid.GetEmptyGridSpaces();
+	
+	//POSITION/DIRECTION
+	private Slot _slot;
+	public Slot GetSlot() => _slot;
+	public void SetSlot(Slot slot) => _slot = slot;
+	public ItemSlotInventory GetInventory() => _slot?.GetInventory();
+	public bool IsDragging;
+	public Vector2Int GetInventoryPosition() => _slot == null ? Vector2Int.zero : _slot.GetGridPosition();
+	
+	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
+	private Direction _direction;
+	public Direction GetDirection() => _direction;
+	public void SetDirection(Direction dir) => _direction = dir;
 	public void Setup()
 	{
 		if (_init) return;
 		_init = true;
-		_itemComponents.ForEach(component => component.Setup(GetData()));
+		GetComponentsInChildren<ItemComponent>().ToList().ForEach(component => component.Setup(GetData()));
+	}
+
+	
+	public void SetSpriteAlpha(float alpha)
+	{
+		var color = _spriteRenderer.color;
+		color.a = alpha;
+		_spriteRenderer.color = color;
+		Debug.Log("setting alpha: "  + alpha);
 	}
 
 	public void SetIDAndSetupComponents(int itemID)
@@ -41,21 +60,12 @@ public class Item : MonoBehaviour
 		gameObject.DestroySafely();
 	}
 
-	public void SetSlot(Slot slot)
-	{
-		_slot = slot;
-		inventoryPosition = _slot.GetGridPos();
-	}
-
-	public Slot GetSlot() =>  _slot;
-
-	public void RotateItemCounterClockwise() => GetRotation().RotateItemCounterClockwise();
-	public void RotateToDirection(Direction newDirection) => GetRotation().RotateToDirection(newDirection);
+	
 
 	public Vector2 GetBottomLeftPosition()
 	{
 		var itemSpaceGrid = Grid;
-		return GetRotation().GetDirection() switch
+		return GetDirection() switch
 		       {
 			       Direction.Up => itemSpaceGrid.GetSpaceByGridPosition(0, 0).transform.position,
 			       Direction.Left => itemSpaceGrid.GetSpaceByGridPosition(0, itemSpaceGrid.GetGridInfo().Height - 1).transform.position,
@@ -66,11 +76,8 @@ public class Item : MonoBehaviour
 		       };
 	}
 
-	public void SetPositionWithOffset(Vector2 transformPosition)
-	{
-		transform.position = transformPosition - GetRotation().GetRotationOffset();
-	}
-	public bool CanDrop(IItemContainer destinationInventory)
+	
+	public bool CanDrop(ItemSlotInventory destinationInventory)
 	{
 		if (destinationInventory == null) return false;
 		var pointsToTest = Grid.GetWorldPositionsOfFullSpaces();
@@ -81,12 +88,17 @@ public class Item : MonoBehaviour
 
 			foreach (var slot in slots)
 			{
-				if (slot.GetInventory() != destinationInventory) continue;
+				if (slot.GetInventory() !=  destinationInventory) continue;
 
 				if (!slots[0].IsUnoccupied || slots[0].IsDisabled) return false;
 			}
 		}
 
 		return true;
+	}
+
+	public bool PlaceInFirstEmptySpot()
+	{
+		return false;
 	}
 }

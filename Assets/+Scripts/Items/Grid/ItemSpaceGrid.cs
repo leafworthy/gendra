@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class ItemSpaceGrid : Grid, ItemComponent
 {
-
-	public List<ItemGridSpace> GetItemGridSpaces()
+	private List<ItemGridSpace> GetItemGridSpaces()
 	{
 		var spaces = new List<ItemGridSpace>();
 		foreach (var space in GetGridObjects())

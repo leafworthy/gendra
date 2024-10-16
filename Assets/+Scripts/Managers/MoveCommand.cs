@@ -17,7 +17,7 @@ public class MoveCommand : IInventoryCommand
 		OriginalInventory = originalInventory;
 		
 		NewPosition = item.GetInventoryPosition();
-		NewDirection = item.GetRotation().GetDirection();
+		NewDirection = item.GetDirection();
 		NewInventory = item.GetInventory() as ItemSlotInventory;
 		
 	}
@@ -25,8 +25,9 @@ public class MoveCommand : IInventoryCommand
 	public void Redo()
 	{
 		OriginalInventory.DragOut(Item);
-		Item.RotateToDirection(NewDirection);
-		Item.transform.position = (Vector2) NewInventory.GetSlotFromGridPosition(NewPosition).transform.position-Item.GetRotation().GetRotationOffset();
+		ItemMover.RotateToDirection(Item, NewDirection);
+		
+		ItemMover.MoveToPosition(Item, NewInventory.GetSlotFromGridPosition(NewPosition).transform.position);
 
 		NewInventory.DragIn(Item);
 	}
@@ -34,10 +35,8 @@ public class MoveCommand : IInventoryCommand
 	public void Undo()
 	{
 		NewInventory.DragOut(Item);
-		Item.RotateToDirection(OriginalDirection);
-		Item.transform.position = (Vector2) OriginalInventory.GetSlotFromGridPosition(OriginalPosition).transform.position -
-		                          Item.GetRotation().GetRotationOffset();
-		
+		ItemMover.RotateToDirection(Item,OriginalDirection);
+		ItemMover.MoveToPosition(Item,OriginalInventory.GetSlotFromGridPosition(OriginalPosition).transform.position);
 		OriginalInventory.DragIn(Item);
 	}
 

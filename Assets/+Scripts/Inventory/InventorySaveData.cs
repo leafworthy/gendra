@@ -23,8 +23,8 @@ public class InventorySaveData
 			var itemSaveData = new ItemSaveData
 			{
 				ItemID = item.GetID(),
-				ItemSlotPosition = item.GetSlot().GetGridPos(),
-				ItemDirection = item.GetRotation().GetDirection()
+				ItemSlotPosition = item.GetSlot().GetGridPosition(),
+				ItemDirection = item.GetDirection()
 			};
 			Debug.Log("saved item: " + itemSaveData.ItemID);
 			savedItems.Add(itemSaveData);
@@ -38,6 +38,6 @@ public class InventorySaveData
 public class ItemSaveData
 {
 	public int ItemID;
-	public Vector2 ItemSlotPosition;
+	public Vector2Int ItemSlotPosition;
 	public Direction ItemDirection;
 }

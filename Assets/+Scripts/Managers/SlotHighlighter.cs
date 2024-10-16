@@ -1,46 +1,29 @@
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class SlotHighlighter : MonoBehaviour
 {
-	private List<SlotHighlight> currentlyHighlightedSlots = new();
+	private SlotHighlight currentHighlightedSlot;
+
 	private void Update()
 	{
-		UnHighlightTheOld();
-		HighlightTheNew();
+		HighlightSlotUnderMouse();
 	}
 
-	private void HighlightTheNew()
+
+	private void HighlightSlotUnderMouse()
 	{
 		var highlightableSlotsAtMousePosition = MouseManager.GetObjectsAtMousePosition<SlotHighlight>();
-		var toAdd = new List<SlotHighlight>();
-		foreach (var highlightable in highlightableSlotsAtMousePosition)
+		if (highlightableSlotsAtMousePosition.Count <= 0)
 		{
-			if (currentlyHighlightedSlots.Contains(highlightable)) continue;
-			highlightable.Highlight();
-			toAdd.Add(highlightable);
+			if (currentHighlightedSlot != null) currentHighlightedSlot.SetHighlighted(false);
+			return;
 		}
-
-		foreach (var highlightableItemSpace in toAdd) currentlyHighlightedSlots.Add(highlightableItemSpace);
+		var newSlot = highlightableSlotsAtMousePosition[0];
+		if (currentHighlightedSlot == newSlot) return;
+		if(currentHighlightedSlot != null)currentHighlightedSlot.SetHighlighted(false);
+		currentHighlightedSlot = highlightableSlotsAtMousePosition[0];
+		currentHighlightedSlot.SetHighlighted(true);
 	}
 
-	private void UnHighlightTheOld()
-	{
-		var highlightableSlotsAtMousePos = MouseManager.GetObjectsAtMousePosition<SlotHighlight>();
-		var toRemove = new List<SlotHighlight>();
-		foreach (var slot in currentlyHighlightedSlots)
-		{
-			if (highlightableSlotsAtMousePos.Contains(slot)) continue;
-			if (slot == null)
-			{
-				toRemove.Add(slot);
-				continue;
-			}
-
-			slot.UnHighlight();
-			toRemove.Add(slot);
-		}
-
-		foreach (var slot in toRemove) currentlyHighlightedSlots.Remove(slot);
-	}
 }

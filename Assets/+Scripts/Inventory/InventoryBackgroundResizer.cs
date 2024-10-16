@@ -5,6 +5,7 @@ public class InventoryBackgroundResizer : MonoBehaviour, InventoryComponent
 {
 	[SerializeField] private SpriteRenderer _inventoryBG;
 	private InventoryComponents components;
+	
 	private BoxCollider2D _inventoryCollider => _inventoryBG.GetComponent<BoxCollider2D>();
 	
 	public float GetBGWidth() => _inventoryBG.bounds.size.x;

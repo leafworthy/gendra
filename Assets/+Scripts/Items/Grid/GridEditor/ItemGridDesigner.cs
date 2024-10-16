@@ -100,7 +100,7 @@ public class ItemGridDesigner : MonoBehaviour
 	private void SaveGridOnClick()
 	{
 		MakeNewUnsavedDataAndCopyCurrentItem();
-		unsavedItemData.spaceGridInfo.EmptyCells = item.Grid.GetEmptyGridSpaces();
+		unsavedItemData.spaceGridInfo.EmptyCells = item.GetEmptyGridSpaces();
 		var itemData = ItemData.GetItemData(dataIndex);
 		if (itemData != null)
 		{

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class Slot : MonoBehaviour, IGriddable, IItemContainer
+public class Slot : MonoBehaviour, IGriddable
 {
-	public Vector2Int GetGridPos() => _spaceGridPos;
+	
 	private Vector2Int _spaceGridPos;
 	private ItemSlotInventory Container => GetComponentInParent<ItemSlotInventory>();
 	public Item GetItem() => _currentItem;
@@ -11,9 +11,7 @@ public class Slot : MonoBehaviour, IGriddable, IItemContainer
 
 	public void SetOccupied(Item item) => _currentItem = item;
 	public bool IsUnoccupied => _currentItem == null;
-	private static Vector3 centerOffset = new(0.5f, 0.5f, 0);
-	private bool _isDisabled;
-	public bool IsDisabled => _isDisabled;
+	public bool IsDisabled { get; private set; }
 
 	public ItemSlotInventory GetInventory() => Container;
 	public void SetGridPosition(int x, int y)
@@ -22,16 +20,9 @@ public class Slot : MonoBehaviour, IGriddable, IItemContainer
 	}
 
 	public Vector2Int GetGridPosition() =>  _spaceGridPos;
-
-	public bool DragIn(Item draggingItem) => Container.DragIn(draggingItem);
-
-	public bool DragOut(Item item) => Container.DragOut(item);
-
-	public Vector2 GetCenter() => transform.position + centerOffset;
-
-	public void SetDisabled()
+	public void SetEmpty()
 	{
-		_isDisabled = true;
+		IsDisabled = true;
 	}
 
 }

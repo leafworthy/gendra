@@ -9,12 +9,14 @@ public class InventoryComponents : MonoBehaviour
 
 	private void Start()
 	{
+		return;
 		_inventory.OnSetupComplete += ResetUI;
 		_inventory.OnInventoryChanged += ResetupUI;
 	}
 
 	private void ResetupUI()
 	{
+		return;
 		var components = GetComponentsInChildren<InventoryComponent>();
 		foreach (var component in components)
 		{
@@ -25,6 +27,7 @@ public class InventoryComponents : MonoBehaviour
 	[Button]
 	private void ResetUI()
 	{
+		return;
 		_inventory.ReSetup();
 		var components = GetComponentsInChildren<InventoryComponent>();
 		foreach (var component in components)	

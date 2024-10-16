@@ -22,17 +22,17 @@ public class MoveTracker : MonoBehaviour
     private void OnItemStartDragging(Item item)
     {
         _originalPosition = item.GetInventoryPosition();
-        _originalDirection = item.GetRotation().GetDirection();
-        _originalInventory = item.GetInventory() as ItemSlotInventory;
+        _originalDirection = item.GetDirection();
+        _originalInventory = item.GetInventory();
         Debug.Log("Start dragging from: " + _originalPosition + " Direction: " + _originalDirection + " Inventory: " + _originalInventory);
     }
 
     private void OnItemStopDragging(Item item)
     {
-        Debug.Log("Stop dragging to: " + item.GetInventoryPosition() + " Direction: " + item.GetRotation().GetDirection() + " Inventory: " + item.GetInventory());
+        Debug.Log("Stop dragging to: " + item.GetInventoryPosition() + " Direction: " + item.GetDirection() + " Inventory: " + item.GetInventory());
         
         // If the item is not moved, do not add to stack
-        if (_originalPosition == item.GetInventoryPosition() && _originalDirection == item.GetRotation().GetDirection() && _originalInventory ==
+        if (_originalPosition == item.GetInventoryPosition() && _originalDirection == item.GetDirection() && _originalInventory ==
             (ItemSlotInventory)item.GetInventory())
         {
             Debug.Log("Same spot, no need to add to undo stack");

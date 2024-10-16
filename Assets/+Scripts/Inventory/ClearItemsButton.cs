@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ClearItemsButton : MonoBehaviour
 {
-	public ItemSlotInventory Inventory => GetComponentInParent<ItemSlotInventory>();
+	private ItemSlotInventory Inventory => GetComponentInParent<ItemSlotInventory>();
 
 	public void ClearItems()
 	{

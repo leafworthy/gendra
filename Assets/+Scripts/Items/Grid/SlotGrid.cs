@@ -19,15 +19,15 @@ public class SlotGrid : Grid
 	private void SetEmptySpaces()
 	{
 		var emptySpaces = GetGridInfo().EmptyCells;
-		foreach (var slot in slots.Where(space => emptySpaces.Contains(space.GetGridPos())))
+		foreach (var slot in slots.Where(space => emptySpaces.Contains(space.GetGridPosition())))
 		{
-			slot.SetDisabled();
+			slot.SetEmpty();
 		}
 	}
 
 	public Slot GetSlotFromGridPosition(Vector2Int newPosition)
 	{   
-		var slot = slots.FirstOrDefault(s => s.GetGridPos() == newPosition);
+		var slot = slots.FirstOrDefault(s => s.GetGridPosition() == newPosition);
 		if (slot == null) Debug.Log("slot null");
 		return slot;
 	}

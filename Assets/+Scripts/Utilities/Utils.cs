@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class Utils
 {
-	public static void DrawX(Vector2 pos, float size = .5f)
+	public static void DrawX(Vector2 pos, float size = .5f, Color color = default)
 	{
-		Debug.DrawLine(new Vector2(-size, -size) + pos, pos + new Vector2(size, size), Color.red, 1f);
-		Debug.DrawLine(new Vector2(-size, size) + pos, pos + new Vector2(size, -size), Color.red, 1f);
+		if (color == default) color = Color.red;
+		Debug.DrawLine(new Vector2(-size, -size) + pos, pos + new Vector2(size, size), color, .5f);
+		Debug.DrawLine(new Vector2(-size, size) + pos, pos + new Vector2(size, -size), color, .5f);
 
 	}
 }

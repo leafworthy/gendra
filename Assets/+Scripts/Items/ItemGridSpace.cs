@@ -7,7 +7,6 @@ public class ItemGridSpace : MonoBehaviour, IGriddable
 	public bool IsEmptySpace;
 	public Vector2Int GetGridPos() => _spaceGridPos;
 
-	private SpriteRenderer _spriteRenderer => GetComponentInChildren<SpriteRenderer>();
 
 	public void SetGridPosition(int x, int y)
 	{
@@ -18,7 +17,4 @@ public class ItemGridSpace : MonoBehaviour, IGriddable
 
 	public Item GetItem() => IsEmptySpace ? null : item;
 
-	public void ShowSpaceCantDrop() => _spriteRenderer.color = ColorManager.GetColor(ColorManager.ItemColor.red);
-
-	public void UnHighlightActualSpace() => _spriteRenderer.color = Color.clear;
 }

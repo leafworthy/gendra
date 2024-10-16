@@ -53,9 +53,15 @@ public class InventorySaver : MonoBehaviour
         }
 
         Debug.Log("adding item: " + itemSaveData.ItemID + " / " + itemSaveData.ItemSlotPosition);
-        var item = _itemCreator.CreateItemFromID(itemSaveData.ItemID);
-        var slot = _inventory.GetGrid().GetSlotAtGridPosition(itemSaveData.ItemSlotPosition);
-        _inventory.AddItemIntoSpecificSlot(item, slot, itemSaveData.ItemDirection);
+        var item = ItemCreator.CreateItemFromID(itemSaveData.ItemID, _inventory);
+        var slot = _inventory.GetSlotAtGridPosition(itemSaveData.ItemSlotPosition);
+        
+        ItemMover.RotateToDirection(item, itemSaveData.ItemDirection);
+        ItemMover.MoveToPosition(item, slot.transform.position);
+        if (_inventory.DragIn(item)) return;
+        
+        Debug.Log("item placement failed", this);
+        item.DestroyItem();
     }
 }
 

@@ -6,19 +6,19 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Grid : MonoBehaviour
 {
-	private int size = 1;
+	private const int size = 1;
 	private GameObject gridPrefab;
 	public GridInfo gridInfo;
 	public GridInfo GetGridInfo() => gridInfo;
-	public List<IGriddable> GetGridObjects() => gridObjects;
+	protected List<IGriddable> GetGridObjects() => gridObjects;
 	private List<IGriddable> gridObjects = new();
 
 	[Button]
 	private void DestroyGrid()
 	{
-		var allspaces = (from Transform t in transform select t.gameObject).ToList();
+		var allItemSpaces = (from Transform t in transform select t.gameObject).ToList();
 
-		foreach (var itemSpace in allspaces)
+		foreach (var itemSpace in allItemSpaces)
 		{
 			itemSpace.DestroySafely();
 		}
@@ -43,10 +43,5 @@ public class Grid : MonoBehaviour
 				gridObjects.Add(newSpace);
 			}
 		}
-	}
-
-	public Slot GetSlotAtGridPosition(Vector2 itemGridPosition)
-	{
-		return gridObjects.FirstOrDefault(x => x.GetGridPosition() == itemGridPosition) as Slot;
 	}
 }

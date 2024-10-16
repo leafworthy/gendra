@@ -16,13 +16,6 @@
 	public interface IGriddable
 	{
 		void SetGridPosition(int x, int y);
-		Vector2Int GetGridPosition();
 	}
 
-	public interface IItemContainer 
-	{
-		bool DragIn(Item draggingItem);
-		bool DragOut(Item item);
-		
-	}
 

@@ -50,7 +50,7 @@ public class ItemHoverHighlighter : MonoBehaviour
 
 	private void Update()
 	{
-		var draggingItem = ItemMover.DraggingItem;
+		var draggingItem = ItemGrabber.DraggingItem;
 
 		UpdateCurrentlyHoveredSlots(draggingItem);
 

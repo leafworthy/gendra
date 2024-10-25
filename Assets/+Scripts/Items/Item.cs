@@ -97,8 +97,5 @@ public class Item : MonoBehaviour
 		return true;
 	}
 
-	public bool PlaceInFirstEmptySpot()
-	{
-		return false;
-	}
+	public bool CanDrag(Player mainPlayer) => mainPlayer.money >= GetData().cost;
 }

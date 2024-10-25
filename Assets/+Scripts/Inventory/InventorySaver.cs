@@ -56,8 +56,8 @@ public class InventorySaver : MonoBehaviour
         var item = ItemCreator.CreateItemFromID(itemSaveData.ItemID, _inventory);
         var slot = _inventory.GetSlotAtGridPosition(itemSaveData.ItemSlotPosition);
         
-        ItemMover.RotateToDirection(item, itemSaveData.ItemDirection);
-        ItemMover.MoveToPosition(item, slot.transform.position);
+        ItemGrabber.RotateToDirection(item, itemSaveData.ItemDirection);
+        ItemGrabber.MoveToPosition(item, slot.transform.position);
         if (_inventory.DragIn(item)) return;
         
         Debug.Log("item placement failed", this);

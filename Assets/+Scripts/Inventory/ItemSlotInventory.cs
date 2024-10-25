@@ -161,7 +161,7 @@ public class ItemSlotInventory : MonoBehaviour, ItemComponent
 	{
 		foreach (var slot in GetSlots())
 		{
-			ItemMover.MoveItemToSlot(item, slot);
+			ItemGrabber.MoveItemToSlot(item, slot);
 			if (DragIn(item)) return true;
 		}
 		return false;

@@ -15,8 +15,8 @@ public class MoveTracker : MonoBehaviour
 
     private void Start()
     {
-        ItemMover.OnItemStartDragging += OnItemStartDragging;
-        ItemMover.OnItemStopDragging += OnItemStopDragging;
+        ItemGrabber.OnItemStartDragging += OnItemStartDragging;
+        ItemGrabber.OnItemStopDragging += OnItemStopDragging;
     }
 
     private void OnItemStartDragging(Item item)

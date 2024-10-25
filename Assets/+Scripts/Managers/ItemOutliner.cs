@@ -7,6 +7,7 @@ public class ItemOutliner : MonoBehaviour
 	private Item currentlyDraggingItem;
 	private static readonly int IsHighlighted_AnimatorHash = Animator.StringToHash("IsHighlighted");
 	private static readonly int IsHovering = Animator.StringToHash("IsHovering");
+	private static readonly int CanDrag = Animator.StringToHash("CanDrag");
 
 	private void Update()
 	{
@@ -61,8 +62,11 @@ public class ItemOutliner : MonoBehaviour
 		currentlyHighlightedItem = item;
 		var _animator = item.GetComponentInChildren<Animator>(true);
 		_animator.SetBool(IsHighlighted_AnimatorHash, true);
+	
 		var _spriteRenderer = item.GetComponentInChildren<SpriteRenderer>(true);
-		_spriteRenderer.color = Color.white;
+		
+		var canDrag = item.CanDrag(Player.mainPlayer);
+		_animator.SetBool(CanDrag, canDrag);
 		SortingManager.ChangeLayer(_spriteRenderer, SortingManager.ItemOccupiedLayer);
 		SortingManager.SetToFront(_spriteRenderer);
 	}
@@ -71,6 +75,8 @@ public class ItemOutliner : MonoBehaviour
 	{
 		var _animator = item.GetComponentInChildren<Animator>(true);
 		_animator.SetBool(IsHighlighted_AnimatorHash, false);
+		var canDrag = item.CanDrag(Player.mainPlayer);
+		_animator.SetBool(CanDrag, canDrag);
 		var _spriteRenderer = item.GetComponentInChildren<SpriteRenderer>(true);
 		_spriteRenderer.color = ColorManager.GetColorFromCategoryDark(ColorManager.ItemColor.white);
 		currentlyHighlightedItem = null;

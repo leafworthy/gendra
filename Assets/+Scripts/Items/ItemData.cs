@@ -8,6 +8,7 @@ public class ItemData : ScriptableObject
 	public int itemID;
 	public GridInfo spaceGridInfo;
 	public ColorManager.ItemColor itemColor;
+	public float cost = 10;
 	private static List<Sprite> itemSpriteList => Resources.LoadAll<Sprite>(imageFilePath).ToList();
 	private const string imageFilePath = "ItemImages";
 
